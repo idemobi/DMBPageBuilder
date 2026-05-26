@@ -1,0 +1,189 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+    <PropertyGroup>
+        <RootNamespace>DMBPageBuilder</RootNamespace>
+        <Title>DMBPageBuilder</Title>
+        <PackageTags>idemobi Page Builder</PackageTags>
+        <Description>DMBPageBuilder</Description>
+        <PackageReleaseNotes>note</PackageReleaseNotes>
+        <PackageIcon>DMBPageBuilder.png</PackageIcon>
+        <AssemblyOriginatorKeyFile>DMBPageBuilder.snk</AssemblyOriginatorKeyFile>
+    </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <EnableDefaultRazorGenerateItems>true</EnableDefaultRazorGenerateItems>
+        <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+        <IncludeRazorContentInPack>false</IncludeRazorContentInPack>
+        <EmbedRazorGenerateSources>false</EmbedRazorGenerateSources>
+        <LangVersion>default</LangVersion>
+        <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+        <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+        <RunAnalyzers>true</RunAnalyzers>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <SignAssembly>true</SignAssembly>
+        <PublicSign>true</PublicSign>
+        <Configurations>Debug;Release;NuGet</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <VersionBase>$([System.DateTime]::UtcNow.ToString("yyyy.Mdd.HHmm"))</VersionBase>
+        <BuildDate>$([System.DateTime]::UtcNow.ToString("yyyy-MM-dd HH:mm:ss"))</BuildDate>
+        <Version>0.9.0</Version>
+        <FileVersion>0.9.0.0</FileVersion>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <Company>idéMobi</Company>
+        <Authors>Jean-François CONTART and Quentin BOULOGNE</Authors>
+        <Copyright>Copyright © $(Company) $([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
+        <NeutralLanguage>en</NeutralLanguage>
+        <PackageProjectUrl>https://dev.azure.com/Game-Data-Forge/Game-Data-Forge</PackageProjectUrl>
+        <PackageLicenseUrl>https://dev.azure.com/Game-Data-Forge/Game-Data-Forge/_git/Game-Data-Forge?path=/LICENCE.md</PackageLicenseUrl>
+        <RepositoryUrl>https://Game-Data-Forge@dev.azure.com/Game-Data-Forge/Game-Data-Forge/_git/Game-Data-Forge</RepositoryUrl>
+        <RepositoryType>AzureDevOps</RepositoryType>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <GenerateAssemblyMetadataAttribute>true</GenerateAssemblyMetadataAttribute>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DefineConstants/>
+        <DocumentationFile>bin\Release\net10.0\DMBPageBuilder.xml</DocumentationFile>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DocumentationFile>bin\Debug\net10.0\DMBPageBuilder.xml</DocumentationFile>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'NuGet' ">
+        <DefineConstants>NUGET</DefineConstants>
+        <Optimize>true</Optimize>
+        <DocumentationFile>bin\NuGet\net10.0\DMBPageBuilder.xml</DocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    <Choose>
+        <When Condition=" '$(Configuration)' == 'NuGet' ">
+            <ItemGroup Label="Case NuGet">
+                <PackageReference Include="DMBServerWebHelper" Version="0.9.0"/>
+                <PackageReference Include="DMBServerHelper" Version="0.9.0"/>
+            </ItemGroup>
+        </When>
+        <Otherwise>
+            <ItemGroup Label="Case Debug, Release, Deployment">
+                <ProjectReference Include="..\DMBServerWebHelper\DMBServerWebHelper.csproj"/>
+                <ProjectReference Include="..\DMBServerHelper\DMBServerHelper.csproj"/>
+            </ItemGroup>
+        </Otherwise>
+    </Choose>
+    <ItemGroup Label="Import package">
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.8" />
+        <PackageReference Include="Schema.NET" Version="13.0.0" />
+    </ItemGroup>
+    <ItemGroup Label="Files in package">
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+        <None Include="DMBPageBuilder.png" Pack="true" PackagePath="\"/>
+        <None Remove="**/*.meta"/>
+    </ItemGroup>
+    <ItemGroup Condition=" '$(Configuration)' == 'Debug' " Label="Razor Generator">
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.8" />
+    </ItemGroup>
+    <ItemGroup Condition=" '$(Configuration)' == 'Debug' " Label="Razor Generator">
+        <Content Update="Views\*">
+            <Generator>RazorGenerator</Generator>
+        </Content>
+    </ItemGroup>
+    <ItemGroup Label="EmbeddedResource">
+        <Content Remove="wwwroot\**\*"/>
+        <EmbeddedResource Include="wwwroot\**\*"/>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.en-US.resx">
+            <DependentUpon>DMBPageBuilderInternalLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.fr-FR.resx">
+            <DependentUpon>DMBPageBuilderInternalLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.en-US.resx">
+            <DependentUpon>DMBPageBuilderDataAnnotationLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.fr-FR.resx">
+            <DependentUpon>DMBPageBuilderDataAnnotationLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>DMBPageBuilderInternalLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>DMBPageBuilderDataAnnotationLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.de-DE.resx">
+          <DependentUpon>DMBPageBuilderDataAnnotationLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.es-ES.resx">
+          <DependentUpon>DMBPageBuilderDataAnnotationLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.it-IT.resx">
+          <DependentUpon>DMBPageBuilderDataAnnotationLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.ja-JP.resx">
+          <DependentUpon>DMBPageBuilderDataAnnotationLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.ko-KR.resx">
+          <DependentUpon>DMBPageBuilderDataAnnotationLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.nl-NL.resx">
+          <DependentUpon>DMBPageBuilderDataAnnotationLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.pt-BR.resx">
+          <DependentUpon>DMBPageBuilderDataAnnotationLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.tlh.resx">
+          <DependentUpon>DMBPageBuilderDataAnnotationLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.zh-CN.resx">
+          <DependentUpon>DMBPageBuilderDataAnnotationLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.de-DE.resx">
+          <DependentUpon>DMBPageBuilderInternalLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.es-ES.resx">
+          <DependentUpon>DMBPageBuilderInternalLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.it-IT.resx">
+          <DependentUpon>DMBPageBuilderInternalLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.ja-JP.resx">
+          <DependentUpon>DMBPageBuilderInternalLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.ko-KR.resx">
+          <DependentUpon>DMBPageBuilderInternalLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.nl-NL.resx">
+          <DependentUpon>DMBPageBuilderInternalLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.pt-BR.resx">
+          <DependentUpon>DMBPageBuilderInternalLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.tlh.resx">
+          <DependentUpon>DMBPageBuilderInternalLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.zh-CN.resx">
+          <DependentUpon>DMBPageBuilderInternalLocalization.resx</DependentUpon>
+        </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup Label="Localization">
+        <Compile Update="Resources\DMBPageBuilderDataAnnotationLocalization.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>DMBPageBuilderDataAnnotationLocalization.resx</DependentUpon>
+        </Compile>
+        <EmbeddedResource Update="Resources\DMBPageBuilderDataAnnotationLocalization.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>DMBPageBuilderDataAnnotationLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <Compile Update="Resources\DMBPageBuilderInternalLocalization.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>DMBPageBuilderInternalLocalization.resx</DependentUpon>
+        </Compile>
+        <EmbeddedResource Update="Resources\DMBPageBuilderInternalLocalization.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>DMBPageBuilderInternalLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+</Project>
