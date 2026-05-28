@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("noframes is obsolete.")]
     /// <summary>
     /// Builds an HTML <c>noframes</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("noframes is obsolete.")]
     public sealed class PB_NoframesBuilder : HtmlTagBuilder<PB_NoframesBuilder>
     {
         #region Instance constructors and destructors

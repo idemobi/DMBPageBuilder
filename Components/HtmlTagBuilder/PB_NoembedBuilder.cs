@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("noembed is obsolete.")]
     /// <summary>
     /// Builds an HTML <c>noembed</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("noembed is obsolete.")]
     public sealed class PB_NoembedBuilder : HtmlTagBuilder<PB_NoembedBuilder>
     {
         #region Instance constructors and destructors

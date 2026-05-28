@@ -15,10 +15,10 @@ using DMBServerHelper;
 
 namespace DMBPageBuilder
 {
-    [Serializable]
     /// <summary>
     /// Represents a legacy helper that renders one HTML <c>link</c> asset tag.
     /// </summary>
+    [Serializable]
     public class WebLinkTag
     {
         #region Instance fields and properties
@@ -26,32 +26,32 @@ namespace DMBPageBuilder
         /// <summary>
         ///     Gets or sets the crossorigin policy.
         /// </summary>
-        public string Crossorigin { set; get; }
+        public string Crossorigin { set; get; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the target URL rendered in the <c>href</c> attribute.
         /// </summary>
-        public string Href { set; get; }
+        public string Href { set; get; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the subresource integrity hash.
         /// </summary>
-        public string Integrity { set; get; }
+        public string Integrity { set; get; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the relationship rendered in the <c>rel</c> attribute.
         /// </summary>
-        public string Rel { set; get; }
+        public string Rel { set; get; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the icon size rendered in the <c>sizes</c> attribute.
         /// </summary>
-        public string Size { set; get; }
+        public string Size { set; get; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the MIME type rendered in the <c>type</c> attribute.
         /// </summary>
-        public string Type { set; get; }
+        public string Type { set; get; } = string.Empty;
 
         #endregion
 

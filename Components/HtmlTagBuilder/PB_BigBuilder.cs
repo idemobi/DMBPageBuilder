@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("big is obsolete in HTML5.")]
     /// <summary>
     /// Builds an HTML <c>big</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("big is obsolete in HTML5.")]
     public sealed class PB_BigBuilder : HtmlTagBuilder<PB_BigBuilder>
     {
         #region Instance constructors and destructors

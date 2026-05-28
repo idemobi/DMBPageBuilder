@@ -48,7 +48,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="name">The value to assign to the HTML <c>name</c> attribute.</param>
         /// <returns>The current <see cref="PB_InputBuilder" /> instance for chaining.</returns>
-        public PB_InputBuilder SetName(string name)
+        public new PB_InputBuilder SetName(string name)
         {
             return SetAttribute("name", name);
         }

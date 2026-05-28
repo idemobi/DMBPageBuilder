@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("marquee is obsolete and non-standard.")]
     /// <summary>
     /// Builds an HTML <c>marquee</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("marquee is obsolete and non-standard.")]
     public sealed class PB_MarqueeBuilder : HtmlTagBuilder<PB_MarqueeBuilder>
     {
         #region Instance constructors and destructors

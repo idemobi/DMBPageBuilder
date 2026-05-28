@@ -74,7 +74,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="name">The logical region name to render.</param>
         /// <returns>The current <see cref="PB_RegionBuilder" /> instance.</returns>
-        public PB_RegionBuilder SetName(string name)
+        public new PB_RegionBuilder SetName(string name)
         {
             _name = name?.Trim();
             return this;

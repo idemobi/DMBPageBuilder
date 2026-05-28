@@ -252,11 +252,12 @@ namespace DMBPageBuilder
             using StringWriter writer = new();
             if (_page.NeedCookieConsent)
             {
-                if (ServerWebHelperConfiguration.CookieConsent.GetValue(context) == false)
+                CookieBool? cookieConsent = ServerWebHelperConfiguration.CookieConsent;
+                if (cookieConsent != null && cookieConsent.GetValue(context) == false)
                 {
                     if (_page.CookieConsentComposer != null)
                     {
-                        writer.Write(_page.CookieConsentComposer.RenderCookieConsent(_html, _page, ServerWebHelperConfiguration.CookieConsent, context));
+                        writer.Write(_page.CookieConsentComposer.RenderCookieConsent(_html, _page, cookieConsent, context));
                     }
                 }
             }

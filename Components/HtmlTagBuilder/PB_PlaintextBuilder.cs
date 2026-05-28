@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("plaintext is obsolete.")]
     /// <summary>
     /// Builds an HTML <c>plaintext</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("plaintext is obsolete.")]
     public sealed class PB_PlaintextBuilder : HtmlTagBuilder<PB_PlaintextBuilder>
     {
         #region Instance constructors and destructors

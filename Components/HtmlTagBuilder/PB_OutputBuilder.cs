@@ -52,7 +52,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="value">The value to assign to the HTML <c>value</c> attribute.</param>
         /// <returns>The current <see cref="PB_OutputBuilder" /> instance for chaining.</returns>
-        public PB_OutputBuilder SetName(string value) => SetAttribute("name", value);
+        public new PB_OutputBuilder SetName(string value) => SetAttribute("name", value);
 
         #endregion
     }

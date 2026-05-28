@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("font is obsolete in HTML5.")]
     /// <summary>
     /// Builds an HTML <c>font</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("font is obsolete in HTML5.")]
     public sealed class PB_FontBuilder : HtmlTagBuilder<PB_FontBuilder>
     {
         #region Instance constructors and destructors

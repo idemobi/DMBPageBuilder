@@ -63,7 +63,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="name">The value to assign to the HTML <c>name</c> attribute.</param>
         /// <returns>The current <see cref="PB_TextareaTagBuilder" /> instance for chaining.</returns>
-        public PB_TextareaTagBuilder SetName(string name) => SetAttribute("name", name);
+        public new PB_TextareaTagBuilder SetName(string name) => SetAttribute("name", name);
 
         /// <summary>
         ///     Sets the HTML <c>placeholder</c> attribute.

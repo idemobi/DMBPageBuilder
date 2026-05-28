@@ -20,8 +20,7 @@ namespace DMBPageBuilder
     ///     functionality.
     ///     The enumeration includes a range of styles, from basic variants like Normal and Primary to more specific ones like
     ///     Info, Success, Warning, Danger, Light, and Dark.
-    ///     These styles are applied through methods like <see cref="SetVariant" /> in builders such as
-    ///     <see cref="AlertBuilder" /> and <see cref="GroupActionItem" />.
+    ///     These styles are applied by builders and action items that expose variant or style configuration.
     /// </remarks>
     public enum VariantStyle : int
     {

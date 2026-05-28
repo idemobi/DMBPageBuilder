@@ -69,7 +69,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="name">The value to assign to the HTML <c>name</c> attribute.</param>
         /// <returns>The current <see cref="PB_TextareaBuilder" /> instance for chaining.</returns>
-        public PB_TextareaBuilder SetName(string name)
+        public new PB_TextareaBuilder SetName(string name)
         {
             return SetAttribute("name", name);
         }

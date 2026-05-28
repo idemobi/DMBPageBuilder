@@ -194,7 +194,7 @@ namespace DMBPageBuilder
             }
 
             List<string> details = new();
-            foreach (KeyValuePair<string, ModelStateEntry?> state in modelState)
+            foreach (KeyValuePair<string, ModelStateEntry> state in modelState)
             {
                 if (state.Value == null)
                 {

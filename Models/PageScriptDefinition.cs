@@ -53,7 +53,7 @@ namespace DMBPageBuilder
         /// <summary>
         ///     Gets or sets the script URL rendered in the <c>src</c> attribute.
         /// </summary>
-        public string Url { get; set; }
+        public string Url { get; set; } = string.Empty;
 
         #endregion
 

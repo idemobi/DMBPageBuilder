@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("fencedframe is experimental.")]
     /// <summary>
     /// Builds an HTML <c>fencedframe</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("fencedframe is experimental.")]
     public sealed class PB_FencedframeBuilder : HtmlTagBuilder<PB_FencedframeBuilder>
     {
         #region Instance constructors and destructors

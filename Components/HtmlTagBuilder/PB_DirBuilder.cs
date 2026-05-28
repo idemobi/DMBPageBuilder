@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("dir is obsolete in HTML5.")]
     /// <summary>
     /// Builds an HTML <c>dir</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("dir is obsolete in HTML5.")]
     public sealed class PB_DirBuilder : HtmlTagBuilder<PB_DirBuilder>
     {
         #region Instance constructors and destructors

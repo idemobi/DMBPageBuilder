@@ -61,7 +61,7 @@ namespace DMBPageBuilder
         /// <summary>
         ///     Gets or sets the composer used to render the cookie consent prompt when required.
         /// </summary>
-        public ICookieConsentComposer CookieConsentComposer { get; set; }
+        public ICookieConsentComposer? CookieConsentComposer { get; set; }
 
         /// <summary>
         ///     Gets or sets the culture used to render the document language.

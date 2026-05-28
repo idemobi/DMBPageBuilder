@@ -52,7 +52,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="id">The value to assign to the HTML <c>id</c> attribute.</param>
         /// <returns>The current <see cref="PB_DatalistBuilder" /> instance for chaining.</returns>
-        public PB_DatalistBuilder SetId(string id) => base.SetId(id);
+        public new PB_DatalistBuilder SetId(string id) => base.SetId(id);
 
         #endregion
     }

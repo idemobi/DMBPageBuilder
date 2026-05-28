@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("rb is obsolete.")]
     /// <summary>
     /// Builds an HTML <c>rb</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("rb is obsolete.")]
     public sealed class PB_RbBuilder : HtmlTagBuilder<PB_RbBuilder>
     {
         #region Instance constructors and destructors

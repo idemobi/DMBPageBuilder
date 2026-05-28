@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("nobr is obsolete and non-standard.")]
     /// <summary>
     /// Builds an HTML <c>nobr</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("nobr is obsolete and non-standard.")]
     public sealed class PB_NobrBuilder : HtmlTagBuilder<PB_NobrBuilder>
     {
         #region Instance constructors and destructors

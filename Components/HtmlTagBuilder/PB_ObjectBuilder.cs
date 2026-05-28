@@ -59,7 +59,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="name">The value to assign to the HTML <c>name</c> attribute.</param>
         /// <returns>The current <see cref="PB_ObjectBuilder" /> instance for chaining.</returns>
-        public PB_ObjectBuilder SetName(string name) => SetAttribute("name", name);
+        public new PB_ObjectBuilder SetName(string name) => SetAttribute("name", name);
 
         /// <summary>
         ///     Sets the HTML <c>type</c> attribute.

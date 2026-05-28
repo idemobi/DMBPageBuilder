@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("acronym is obsolete in HTML5.")]
     /// <summary>
     /// Builds an HTML <c>acronym</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("acronym is obsolete in HTML5.")]
     public sealed class PB_AcronymBuilder : HtmlTagBuilder<PB_AcronymBuilder>
     {
         #region Instance constructors and destructors

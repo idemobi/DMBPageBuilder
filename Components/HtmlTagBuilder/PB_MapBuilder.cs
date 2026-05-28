@@ -45,7 +45,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="name">The value to assign to the HTML <c>name</c> attribute.</param>
         /// <returns>The current <see cref="PB_MapBuilder" /> instance for chaining.</returns>
-        public PB_MapBuilder SetName(string name) => SetAttribute("name", name);
+        public new PB_MapBuilder SetName(string name) => SetAttribute("name", name);
 
         #endregion
     }

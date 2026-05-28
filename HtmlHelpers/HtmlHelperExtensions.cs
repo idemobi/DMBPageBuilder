@@ -41,6 +41,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="html">The Razor HTML helper that provides the view writer.</param>
         /// <returns>A new <see cref="PB_AcronymBuilder" /> instance.</returns>
+        [Obsolete("acronym is obsolete in HTML5.")]
         public static PB_AcronymBuilder PB_Acronym(this IHtmlHelper html) => new(html.ViewContext.Writer, html);
 
         /// <summary>
@@ -104,6 +105,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="html">The Razor HTML helper that provides the view writer.</param>
         /// <returns>A new <see cref="PB_BigBuilder" /> instance.</returns>
+        [Obsolete("big is obsolete in HTML5.")]
         public static PB_BigBuilder PB_Big(this IHtmlHelper html) => new(html.ViewContext.Writer, html);
 
         /// <summary>
@@ -230,6 +232,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="html">The Razor HTML helper that provides the view writer.</param>
         /// <returns>A new <see cref="PB_DirBuilder" /> instance.</returns>
+        [Obsolete("dir is obsolete in HTML5.")]
         public static PB_DirBuilder PB_Dir(this IHtmlHelper html) => new(html.ViewContext.Writer, html);
 
         /// <summary>
@@ -300,6 +303,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="html">The Razor HTML helper that provides the view writer.</param>
         /// <returns>A new <see cref="PB_FontBuilder" /> instance.</returns>
+        [Obsolete("font is obsolete in HTML5.")]
         public static PB_FontBuilder PB_Font(this IHtmlHelper html) => new(html.ViewContext.Writer, html);
 
         /// <summary>
@@ -524,6 +528,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="html">The Razor HTML helper that provides the view writer.</param>
         /// <returns>A new <see cref="PB_NoembedBuilder" /> instance.</returns>
+        [Obsolete("noembed is obsolete.")]
         public static PB_NoembedBuilder PB_Noembed(this IHtmlHelper html) => new(html.ViewContext.Writer, html);
 
         /// <summary>
@@ -531,6 +536,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="html">The Razor HTML helper that provides the view writer.</param>
         /// <returns>A new <see cref="PB_NoframesBuilder" /> instance.</returns>
+        [Obsolete("noframes is obsolete.")]
         public static PB_NoframesBuilder PB_Noframes(this IHtmlHelper html) => new(html.ViewContext.Writer, html);
 
         /// <summary>
@@ -615,6 +621,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="html">The Razor HTML helper that provides the view writer.</param>
         /// <returns>A new <see cref="PB_PlaintextBuilder" /> instance.</returns>
+        [Obsolete("plaintext is obsolete.")]
         public static PB_PlaintextBuilder PB_Plaintext(this IHtmlHelper html) => new(html.ViewContext.Writer, html);
 
         /// <summary>
@@ -643,6 +650,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="html">The Razor HTML helper that provides the view writer.</param>
         /// <returns>A new <see cref="PB_RbBuilder" /> instance.</returns>
+        [Obsolete("rb is obsolete.")]
         public static PB_RbBuilder PB_Rb(this IHtmlHelper html) => new(html.ViewContext.Writer, html);
 
         /// <summary>
@@ -672,6 +680,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="html">The Razor HTML helper that provides the view writer.</param>
         /// <returns>A new <see cref="PB_RtcBuilder" /> instance.</returns>
+        [Obsolete("rtc is obsolete.")]
         public static PB_RtcBuilder PB_Rtc(this IHtmlHelper html) => new(html.ViewContext.Writer, html);
 
         /// <summary>
@@ -763,6 +772,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="html">The Razor HTML helper that provides the view writer.</param>
         /// <returns>A new <see cref="PB_StrikeBuilder" /> instance.</returns>
+        [Obsolete("strike is obsolete.")]
         public static PB_StrikeBuilder PB_Strike(this IHtmlHelper html) => new(html.ViewContext.Writer, html);
 
         /// <summary>
@@ -896,6 +906,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="html">The Razor HTML helper that provides the view writer.</param>
         /// <returns>A new <see cref="PB_TtBuilder" /> instance.</returns>
+        [Obsolete("tt is obsolete.")]
         public static PB_TtBuilder PB_Tt(this IHtmlHelper html) => new(html.ViewContext.Writer, html);
 
         /// <summary>
@@ -931,6 +942,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="html">The Razor HTML helper that provides the view writer.</param>
         /// <returns>A new <see cref="PB_XmpBuilder" /> instance.</returns>
+        [Obsolete("xmp is obsolete.")]
         public static PB_XmpBuilder PB_Xmp(this IHtmlHelper html) => new(html.ViewContext.Writer, html);
 
         #endregion

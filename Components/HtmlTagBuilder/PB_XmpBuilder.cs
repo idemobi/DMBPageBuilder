@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("xmp is obsolete.")]
     /// <summary>
     /// Builds an HTML <c>xmp</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("xmp is obsolete.")]
     public sealed class PB_XmpBuilder : HtmlTagBuilder<PB_XmpBuilder>
     {
         #region Instance constructors and destructors

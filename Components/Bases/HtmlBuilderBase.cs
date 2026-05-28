@@ -69,7 +69,7 @@ namespace DMBPageBuilder
         ///     the internal setting and the value can be any object. This dictionary is used to store
         ///     various configuration options or state information that are internal to the builder's operation.
         /// </summary>
-        protected readonly Dictionary<string, object> _internals;
+        protected readonly Dictionary<string, object?> _internals;
 
         /// <summary>
         ///     Represents a dictionary that holds the CSS styles applicable to an HTML element.
@@ -133,7 +133,7 @@ namespace DMBPageBuilder
             _textWriter = writer ?? throw new ArgumentNullException(nameof(writer));
 
             _attributes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            _internals = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            _internals = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
             _styles = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             _composers = new List<IIsCssClassComposer>();
 
@@ -172,7 +172,7 @@ namespace DMBPageBuilder
         /// <param name="key">The internal key.</param>
         /// <param name="value">The value to store.</param>
         /// <returns>The current builder instance for chaining.</returns>
-        public TBuilder SetInternal(string key, object value)
+        public TBuilder SetInternal(string key, object? value)
         {
             _internals[key] = value;
             return This();
@@ -242,7 +242,6 @@ namespace DMBPageBuilder
         /// </summary>
         /// <returns>This member always throws.</returns>
         /// <exception cref="InvalidOperationException">Always thrown to force explicit rendering.</exception>
-        [Obsolete("Use WriteTo(...) or Render() instead.")]
         public sealed override string ToString()
         {
             throw new InvalidOperationException(
@@ -809,7 +808,7 @@ namespace DMBPageBuilder
             }
 
             _internals.Clear();
-            foreach (KeyValuePair<string, object> kvp in source._internals)
+            foreach (KeyValuePair<string, object?> kvp in source._internals)
             {
                 _internals[kvp.Key] = kvp.Value;
             }

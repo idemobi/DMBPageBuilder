@@ -10,12 +10,9 @@
 namespace DMBPageBuilder
 {
     /// <summary>
-    ///     Represents the different types of page containers in the DMB Web Runtime.
-    /// </summary>
-    [Serializable]
-    /// <summary>
     /// Defines values used by page container.
     /// </summary>
+    [Serializable]
     public enum PageContainer : int
     {
         /// <summary>

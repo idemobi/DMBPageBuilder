@@ -19,10 +19,10 @@ using Microsoft.Extensions.Hosting;
 
 namespace DMBPageBuilder
 {
-    [Serializable]
     /// <summary>
     /// Configures DMBPageBuilder services, web assets, and localization resources.
     /// </summary>
+    [Serializable]
     public class PageBuilderConfiguration : WebGenericConfiguration<PageBuilderConfiguration>, IServerWebConfig
     {
         #region Static constructors and destructors

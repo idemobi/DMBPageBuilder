@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMBPageBuilder
 {
-    [Obsolete("rtc is obsolete.")]
     /// <summary>
     /// Builds an HTML <c>rtc</c> element for PageBuilder Razor output.
     /// </summary>
+    [Obsolete("rtc is obsolete.")]
     public sealed class PB_RtcBuilder : HtmlConstrainedTagBuilder<PB_RtcBuilder>
     {
         #region Instance fields and properties

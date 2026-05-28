@@ -15,10 +15,10 @@ using DMBServerHelper;
 
 namespace DMBPageBuilder
 {
-    [Serializable]
     /// <summary>
     /// Represents a legacy helper that renders one HTML <c>script</c> asset tag.
     /// </summary>
+    [Serializable]
     public class WebJavascriptTag
     {
         #region Instance fields and properties
@@ -26,7 +26,7 @@ namespace DMBPageBuilder
         /// <summary>
         ///     Gets or sets the legacy anonymous crossorigin setting.
         /// </summary>
-        public string Anonymous { get; set; }
+        public string Anonymous { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets a value indicating whether the script is rendered with the <c>async</c> attribute.
@@ -36,17 +36,17 @@ namespace DMBPageBuilder
         /// <summary>
         ///     Gets or sets the crossorigin policy.
         /// </summary>
-        public string Crossorigin { set; get; }
+        public string Crossorigin { set; get; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the subresource integrity hash.
         /// </summary>
-        public string Integrity { get; set; }
+        public string Integrity { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the script URL rendered in the <c>src</c> attribute.
         /// </summary>
-        public string Src { get; set; }
+        public string Src { get; set; } = string.Empty;
 
         #endregion
 

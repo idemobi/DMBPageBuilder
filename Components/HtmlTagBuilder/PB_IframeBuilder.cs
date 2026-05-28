@@ -66,7 +66,7 @@ namespace DMBPageBuilder
         /// </summary>
         /// <param name="name">The value to assign to the HTML <c>name</c> attribute.</param>
         /// <returns>The current <see cref="PB_IframeBuilder" /> instance for chaining.</returns>
-        public PB_IframeBuilder SetName(string name) => SetAttribute("name", name);
+        public new PB_IframeBuilder SetName(string name) => SetAttribute("name", name);
 
         /// <summary>
         ///     Sets the HTML <c>src</c> attribute.
