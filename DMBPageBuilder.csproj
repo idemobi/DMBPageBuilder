@@ -3,10 +3,11 @@
         <RootNamespace>DMBPageBuilder</RootNamespace>
         <Title>DMBPageBuilder</Title>
         <PackageTags>idemobi Page Builder</PackageTags>
-        <Description>DMBPageBuilder</Description>
+        <Description>Low-level fluent page, HTML, metadata, asset, and rendering primitives for the PageBuilder ecosystem.</Description>
         <PackageReleaseNotes>note</PackageReleaseNotes>
         <PackageIcon>DMBPageBuilder.png</PackageIcon>
         <AssemblyOriginatorKeyFile>DMBPageBuilder.snk</AssemblyOriginatorKeyFile>
+        <PackageId>DMBPageBuilder</PackageId>
     </PropertyGroup>
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
@@ -32,7 +33,7 @@
         <FileVersion>0.12.0.0</FileVersion>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
         <Company>idéMobi</Company>
-        <Authors>Jean-François CONTART and Quentin BOULOGNE</Authors>
+        <Authors>Jean-François CONTART, Quentin BOULOGNE, Camille GOLLIOT</Authors>
         <Copyright>Copyright © $(Company) $([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
         <NeutralLanguage>en</NeutralLanguage>
         <PackageProjectUrl>https://dev.azure.com/Game-Data-Forge/Game-Data-Forge</PackageProjectUrl>
