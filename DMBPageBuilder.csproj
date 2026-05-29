@@ -188,4 +188,7 @@
             <LastGenOutput>DMBPageBuilderInternalLocalization.Designer.cs</LastGenOutput>
         </EmbeddedResource>
     </ItemGroup>
+    <ItemGroup Label="Project file exclusions">
+        <None Remove=".gitignore" />
+    </ItemGroup>
 </Project>
