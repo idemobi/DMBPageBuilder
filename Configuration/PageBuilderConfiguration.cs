@@ -1,9 +1,7 @@
 #region Copyright
 
-// Game-Data-Forge Solution
-// Written by CONTART Jean-François & BOULOGNE Quentin
-// DMBPageBuilder.csproj PageBuilderConfiguration.cs create at 2026/05/06 08:05:07
-// ©2024-2026 idéMobi SARL FRANCE
+// ©2002-2026 idéMobi
+// www.idemobi.com
 
 #endregion
 
@@ -20,7 +18,7 @@ using Microsoft.Extensions.Hosting;
 namespace DMBPageBuilder
 {
     /// <summary>
-    /// Configures DMBPageBuilder services, web assets, and localization resources.
+    ///     Configures DMBPageBuilder services, web assets, and localization resources.
     /// </summary>
     [Serializable]
     public class PageBuilderConfiguration : WebGenericConfiguration<PageBuilderConfiguration>, IServerWebConfig

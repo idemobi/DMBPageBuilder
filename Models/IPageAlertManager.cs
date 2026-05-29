@@ -1,9 +1,7 @@
 #region Copyright
 
-// Game-Data-Forge Solution
-// Written by CONTART Jean-François & BOULOGNE Quentin
-// DMBPageBuilder.csproj IPageAlertManager.cs create at 2026/05/07 14:05:43
-// ©2024-2026 idéMobi SARL FRANCE
+// ©2002-2026 idéMobi
+// www.idemobi.com
 
 #endregion
 
@@ -129,10 +127,10 @@ namespace DMBPageBuilder
         ///     The optional alert message.
         /// </param>
         /// <param name="modelState">
-        ///     The model state dictionary to inspect, or <see langword="null"/>.
+        ///     The model state dictionary to inspect, or <see langword="null" />.
         /// </param>
         /// <returns>
-        ///     The created alert model, or <see langword="null"/> when no invalid model state should be rendered.
+        ///     The created alert model, or <see langword="null" /> when no invalid model state should be rendered.
         /// </returns>
         PageAlertModel? AddInvalidModel(string title, string? message, ModelStateDictionary? modelState);
 

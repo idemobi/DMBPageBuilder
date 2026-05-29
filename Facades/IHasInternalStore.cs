@@ -1,9 +1,7 @@
 #region Copyright
 
-// Game-Data-Forge Solution
-// Written by CONTART Jean-François & BOULOGNE Quentin
-// DMBPageBuilder.csproj IHasInternalStore.cs create at 2026/05/05 15:05:00
-// ©2024-2026 idéMobi SARL FRANCE
+// ©2002-2026 idéMobi
+// www.idemobi.com
 
 #endregion
 
@@ -33,10 +31,10 @@ namespace DMBPageBuilder
         ///     The internal store key.
         /// </param>
         /// <param name="defaultValue">
-        ///     The value returned when the key is missing or cannot be resolved as <typeparamref name="T"/>.
+        ///     The value returned when the key is missing or cannot be resolved as <typeparamref name="T" />.
         /// </param>
         /// <returns>
-        ///     The stored value, or <paramref name="defaultValue"/> when no compatible value is available.
+        ///     The stored value, or <paramref name="defaultValue" /> when no compatible value is available.
         /// </returns>
         T GetInternal<T>(string key, T defaultValue = default!);
 
@@ -47,7 +45,7 @@ namespace DMBPageBuilder
         ///     The internal store key.
         /// </param>
         /// <param name="value">
-        ///     The value to store, or <see langword="null"/> when the key should store an explicit null value.
+        ///     The value to store, or <see langword="null" /> when the key should store an explicit null value.
         /// </param>
         /// <returns>
         ///     The current builder instance for fluent chaining.

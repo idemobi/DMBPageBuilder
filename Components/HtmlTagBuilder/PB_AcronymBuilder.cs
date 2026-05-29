@@ -1,9 +1,7 @@
 #region Copyright
 
-// Game-Data-Forge Solution
-// Written by CONTART Jean-François & BOULOGNE Quentin
-// DMBPageBuilder.csproj PB_AcronymBuilder.cs create at 2026/05/05 15:05:00
-// ©2024-2026 idéMobi SARL FRANCE
+// ©2002-2026 idéMobi
+// www.idemobi.com
 
 #endregion
 
@@ -16,7 +14,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace DMBPageBuilder
 {
     /// <summary>
-    /// Builds an HTML <c>acronym</c> element for PageBuilder Razor output.
+    ///     Builds an HTML <c>acronym</c> element for PageBuilder Razor output.
     /// </summary>
     [Obsolete("acronym is obsolete in HTML5.")]
     public sealed class PB_AcronymBuilder : HtmlTagBuilder<PB_AcronymBuilder>

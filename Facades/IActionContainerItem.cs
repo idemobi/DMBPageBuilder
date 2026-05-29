@@ -1,9 +1,7 @@
 #region Copyright
 
-// Game-Data-Forge Solution
-// Written by CONTART Jean-François & BOULOGNE Quentin
-// DMBPageBuilder.csproj IActionContainerItem.cs create at 2026/05/05 15:05:00
-// ©2024-2026 idéMobi SARL FRANCE
+// ©2002-2026 idéMobi
+// www.idemobi.com
 
 #endregion
 
@@ -53,7 +51,7 @@ namespace DMBPageBuilder
         ///     elements are accounted for in the final rendered output.
         /// </remarks>
         /// <value>
-        ///     <see langword="true"/> when the action container has child items; otherwise, <see langword="false"/>.
+        ///     <see langword="true" /> when the action container has child items; otherwise, <see langword="false" />.
         /// </value>
         /// <seealso cref="HtmlBuilderBase{TBuilder}" />
         /// <seealso cref="IActionContainerItem" />
