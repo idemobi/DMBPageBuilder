@@ -2,7 +2,7 @@
     <PropertyGroup>
         <RootNamespace>DMBPageBuilder</RootNamespace>
         <Title>DMBPageBuilder</Title>
-        <PackageTags>idemobi Page Builder</PackageTags>
+        <PackageTags>idemobi DMB PageBuilder HTML Razor MVC Metadata Assets Rendering SchemaOrg</PackageTags>
         <Description>Low-level fluent page, HTML, metadata, asset, and rendering primitives for the PageBuilder ecosystem.</Description>
         <PackageReleaseNotes>note</PackageReleaseNotes>
         <PackageIcon>DMBPageBuilder.png</PackageIcon>
