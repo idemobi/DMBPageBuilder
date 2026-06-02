@@ -64,7 +64,7 @@ namespace DMBPageBuilder
         protected override void WriteToCore(TextWriter writer, HtmlEncoder encoder)
         {
             writer.Write("<!-- ");
-            writer.Write(_comment ?? string.Empty);
+            writer.Write(HtmlCommentTextEncoder.Encode(_comment));
             writer.Write(" -->");
         }
 

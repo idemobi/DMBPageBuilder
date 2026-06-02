@@ -160,7 +160,7 @@ namespace DMBPageBuilder
         {
             #if DEBUG
             string name = GetType().Name.Replace("Builder", "", StringComparison.Ordinal);
-            _textWriter.Write($"<!-- Debug : {name} start -->");
+            _textWriter.Write($"<!-- Debug : {HtmlCommentTextEncoder.Encode(name)} start -->");
             #endif
         }
 
@@ -172,7 +172,7 @@ namespace DMBPageBuilder
         {
             #if DEBUG
             string name = GetType().Name.Replace("Builder", "", StringComparison.Ordinal);
-            _textWriter.Write($"<!-- Debug : {name} end -->");
+            _textWriter.Write($"<!-- Debug : {HtmlCommentTextEncoder.Encode(name)} end -->");
             #endif
         }
 

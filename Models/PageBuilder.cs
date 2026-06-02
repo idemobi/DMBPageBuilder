@@ -188,7 +188,7 @@ namespace DMBPageBuilder
         {
             if (!string.IsNullOrWhiteSpace(script.Name))
             {
-                writer.Write($@"<!-- Script inline {script.Name} -->");
+                writer.Write($@"<!-- Script inline {HtmlCommentTextEncoder.Encode(script.Name)} -->");
             }
 
             writer.Write("<script>");
@@ -200,7 +200,7 @@ namespace DMBPageBuilder
         {
             if (!string.IsNullOrWhiteSpace(stylesheet.Name))
             {
-                writer.Write($@"<!-- StyleSheet inline {stylesheet.Name} -->");
+                writer.Write($@"<!-- StyleSheet inline {HtmlCommentTextEncoder.Encode(stylesheet.Name)} -->");
             }
 
             writer.Write("<style>");

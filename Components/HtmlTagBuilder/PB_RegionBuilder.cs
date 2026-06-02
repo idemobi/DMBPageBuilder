@@ -58,13 +58,13 @@ namespace DMBPageBuilder
         /// <inheritdoc />
         protected override void OnBeginRendering()
         {
-            _textWriter.Write($"<!-- region {_name ?? string.Empty} start -->");
+            _textWriter.Write($"<!-- region {HtmlCommentTextEncoder.Encode(_name)} start -->");
         }
 
         /// <inheritdoc />
         protected override void OnEndRendering()
         {
-            _textWriter.Write($"<!-- region {_name ?? string.Empty} end -->");
+            _textWriter.Write($"<!-- region {HtmlCommentTextEncoder.Encode(_name)} end -->");
         }
 
         /// <summary>
@@ -81,10 +81,10 @@ namespace DMBPageBuilder
         /// <inheritdoc />
         protected override void WriteToCore(TextWriter writer, HtmlEncoder encoder)
         {
-            writer.Write($"<!-- region {_name ?? string.Empty} start -->");
+            writer.Write($"<!-- region {HtmlCommentTextEncoder.Encode(_name)} start -->");
             writer.Write($"<{_tag}{BuildAttributes()}>");
             writer.Write($"</{_tag}>");
-            writer.Write($"<!-- region {_name ?? string.Empty} end -->");
+            writer.Write($"<!-- region {HtmlCommentTextEncoder.Encode(_name)} end -->");
         }
 
         #endregion
