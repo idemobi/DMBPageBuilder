@@ -431,30 +431,48 @@ namespace DMBPageBuilder
             if (!basePath.EndsWith("/")) basePath += "/";
             string baseName = string.IsNullOrWhiteSpace(_page.FaviconBaseName) ? "favicon" : _page.FaviconBaseName!;
 
-            writer.Write($@"<link rel=""icon"" href=""{HtmlEncoder.Default.Encode(AppendVersion($"{basePath}{baseName}.ico"))}"" type=""image/x-icon"">");
+            WriteFaviconLink(writer, "icon", $"{basePath}{baseName}.ico", "image/x-icon");
 
             switch (_page.FaviconSet)
             {
                 case PageFaviconSet.Minimal:
-                    writer.Write($@"<link rel=""icon"" href=""{HtmlEncoder.Default.Encode(AppendVersion($"{basePath}{baseName}-32x32.png"))}"" type=""image/png"" sizes=""32x32"">");
+                    WriteFaviconLink(writer, "icon", $"{basePath}{baseName}-32x32.png", "image/png", "32x32");
                 break;
 
                 case PageFaviconSet.Default:
-                    writer.Write($@"<link rel=""icon"" href=""{HtmlEncoder.Default.Encode(AppendVersion($"{basePath}{baseName}-16x16.png"))}"" type=""image/png"" sizes=""16x16"">");
-                    writer.Write($@"<link rel=""icon"" href=""{HtmlEncoder.Default.Encode(AppendVersion($"{basePath}{baseName}-32x32.png"))}"" type=""image/png"" sizes=""32x32"">");
-                    writer.Write($@"<link rel=""apple-touch-icon"" href=""{HtmlEncoder.Default.Encode(AppendVersion($"{basePath}apple-touch-icon-180x180.png"))}"" sizes=""180x180"">");
+                    WriteFaviconLink(writer, "icon", $"{basePath}{baseName}-16x16.png", "image/png", "16x16");
+                    WriteFaviconLink(writer, "icon", $"{basePath}{baseName}-32x32.png", "image/png", "32x32");
+                    WriteFaviconLink(writer, "apple-touch-icon", $"{basePath}apple-touch-icon-180x180.png", sizes: "180x180");
                 break;
 
                 case PageFaviconSet.Full:
-                    writer.Write($@"<link rel=""icon"" href=""{HtmlEncoder.Default.Encode(AppendVersion($"{basePath}{baseName}-16x16.png"))}"" type=""image/png"" sizes=""16x16"">");
-                    writer.Write($@"<link rel=""icon"" href=""{HtmlEncoder.Default.Encode(AppendVersion($"{basePath}{baseName}-32x32.png"))}"" type=""image/png"" sizes=""32x32"">");
-                    writer.Write($@"<link rel=""icon"" href=""{HtmlEncoder.Default.Encode(AppendVersion($"{basePath}{baseName}-48x48.png"))}"" type=""image/png"" sizes=""48x48"">");
-                    writer.Write($@"<link rel=""icon"" href=""{HtmlEncoder.Default.Encode(AppendVersion($"{basePath}{baseName}-96x96.png"))}"" type=""image/png"" sizes=""96x96"">");
-                    writer.Write($@"<link rel=""apple-touch-icon"" href=""{HtmlEncoder.Default.Encode(AppendVersion($"{basePath}apple-touch-icon-180x180.png"))}"" sizes=""180x180"">");
-                    writer.Write($@"<link rel=""icon"" href=""{HtmlEncoder.Default.Encode(AppendVersion($"{basePath}android-chrome-192x192.png"))}"" type=""image/png"" sizes=""192x192"">");
-                    writer.Write($@"<link rel=""icon"" href=""{HtmlEncoder.Default.Encode(AppendVersion($"{basePath}android-chrome-512x512.png"))}"" type=""image/png"" sizes=""512x512"">");
+                    WriteFaviconLink(writer, "icon", $"{basePath}{baseName}-16x16.png", "image/png", "16x16");
+                    WriteFaviconLink(writer, "icon", $"{basePath}{baseName}-32x32.png", "image/png", "32x32");
+                    WriteFaviconLink(writer, "icon", $"{basePath}{baseName}-48x48.png", "image/png", "48x48");
+                    WriteFaviconLink(writer, "icon", $"{basePath}{baseName}-96x96.png", "image/png", "96x96");
+                    WriteFaviconLink(writer, "apple-touch-icon", $"{basePath}apple-touch-icon-180x180.png", sizes: "180x180");
+                    WriteFaviconLink(writer, "icon", $"{basePath}android-chrome-192x192.png", "image/png", "192x192");
+                    WriteFaviconLink(writer, "icon", $"{basePath}android-chrome-512x512.png", "image/png", "512x512");
                 break;
             }
+        }
+
+        private static void WriteFaviconLink(TextWriter writer, string rel, string href, string? type = null, string? sizes = null)
+        {
+            HtmlUrlAttributeValidator.Validate("href", href);
+            writer.Write($@"<link rel=""{HtmlEncoder.Default.Encode(rel)}"" href=""{HtmlEncoder.Default.Encode(AppendVersion(href))}""");
+
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                writer.Write($@" type=""{HtmlEncoder.Default.Encode(type)}""");
+            }
+
+            if (!string.IsNullOrWhiteSpace(sizes))
+            {
+                writer.Write($@" sizes=""{HtmlEncoder.Default.Encode(sizes)}""");
+            }
+
+            writer.Write(">");
         }
 
         #endregion
