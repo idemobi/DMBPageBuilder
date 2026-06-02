@@ -190,10 +190,8 @@ namespace DMBPageBuilder
         /// <exception cref="ArgumentException">Thrown when <paramref name="key" /> is empty.</exception>
         public TBuilder SetStyle(string key, string value, bool important = false)
         {
-            if (string.IsNullOrWhiteSpace(key))
-            {
-                throw new ArgumentException("Style key cannot be null or empty.", nameof(key));
-            }
+            HtmlStyleDeclarationValidator.ValidatePropertyName(key);
+            HtmlStyleDeclarationValidator.ValidatePropertyValue(key, value);
 
             _styles[key] = important
                 ? $"{value} !important"
@@ -930,6 +928,8 @@ namespace DMBPageBuilder
 
             foreach (KeyValuePair<string, string> kvp in _styles)
             {
+                HtmlStyleDeclarationValidator.ValidatePropertyName(kvp.Key);
+                HtmlStyleDeclarationValidator.ValidatePropertyValue(kvp.Key, kvp.Value);
                 sb.Append(kvp.Key);
                 sb.Append(':');
                 sb.Append(kvp.Value);
