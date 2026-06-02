@@ -307,6 +307,7 @@ namespace DMBPageBuilder
         /// <returns>The HTML tag name.</returns>
         public string GetTag()
         {
+            ValidateTagName();
             return _tag;
         }
 
@@ -959,6 +960,15 @@ namespace DMBPageBuilder
         protected virtual void ValidateAttributeValue(string name, string value)
         {
             HtmlUrlAttributeValidator.Validate(name, value);
+        }
+
+        /// <summary>
+        ///     Validates the current HTML tag name before rendering.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when the tag name is invalid.</exception>
+        protected void ValidateTagName()
+        {
+            HtmlTagNameValidator.Validate(_tag);
         }
 
         /// <summary>

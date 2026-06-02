@@ -91,6 +91,7 @@ namespace DMBPageBuilder
         /// <inheritdoc />
         protected override void WriteToCore(TextWriter writer, HtmlEncoder encoder)
         {
+            ValidateTagName();
             writer.Write($"<{_tag}{BuildAttributes()}>");
             if (!string.IsNullOrEmpty(_value))
             {

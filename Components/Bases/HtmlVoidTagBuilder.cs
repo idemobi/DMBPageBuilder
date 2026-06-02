@@ -45,6 +45,7 @@ namespace DMBPageBuilder
         /// <inheritdoc />
         protected override void WriteToCore(TextWriter writer, HtmlEncoder encoder)
         {
+            ValidateTagName();
             switch (_version)
             {
                 case HtmlVersion.Html4:

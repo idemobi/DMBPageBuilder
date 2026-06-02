@@ -130,6 +130,7 @@ namespace DMBPageBuilder
 
             try
             {
+                ValidateTagName();
                 writer.Write($"<{_tag}{BuildAttributes()}>");
                 writer.Write($"</{_tag}>");
             }

@@ -98,6 +98,7 @@ namespace DMBPageBuilder
             DebugStart();
             _started = true;
             OnBeginRendering();
+            ValidateTagName();
             _textWriter.Write($"<{_tag}{BuildAttributes()}>");
 
             return This();
@@ -113,6 +114,7 @@ namespace DMBPageBuilder
                 return;
             }
 
+            ValidateTagName();
             _textWriter.Write($"</{_tag}>");
             _started = false;
             OnEndRendering();
@@ -130,6 +132,7 @@ namespace DMBPageBuilder
         /// <inheritdoc />
         protected override void WriteToCore(TextWriter writer, HtmlEncoder encoder)
         {
+            ValidateTagName();
             writer.Write($"<{_tag}{BuildAttributes()}>");
             writer.Write($"</{_tag}>");
         }

@@ -81,6 +81,7 @@ namespace DMBPageBuilder
         /// <inheritdoc />
         protected override void WriteToCore(TextWriter writer, HtmlEncoder encoder)
         {
+            ValidateTagName();
             writer.Write($"<!-- region {HtmlCommentTextEncoder.Encode(_name)} start -->");
             writer.Write($"<{_tag}{BuildAttributes()}>");
             writer.Write($"</{_tag}>");
