@@ -38,6 +38,17 @@ namespace DMBPageBuilder
         /// <inheritdoc />
         protected override PB_VideoBuilder CreateInstance() => new(_textWriter, _htmlHelper);
 
+        /// <inheritdoc />
+        protected override void ValidateAttributeValue(string name, string value)
+        {
+            HtmlUrlAttributeDataPolicy dataPolicy = string.Equals(name, "src", StringComparison.OrdinalIgnoreCase)
+                ? HtmlUrlAttributeDataPolicy.Video
+                : string.Equals(name, "poster", StringComparison.OrdinalIgnoreCase)
+                    ? HtmlUrlAttributeDataPolicy.Image
+                    : HtmlUrlAttributeDataPolicy.None;
+            HtmlUrlAttributeValidator.Validate(name, value, dataPolicy);
+        }
+
         /// <summary>
         ///     Sets the HTML <c>autoplay</c> attribute.
         /// </summary>

@@ -38,6 +38,16 @@ namespace DMBPageBuilder
         /// <inheritdoc />
         protected override PB_SourceBuilder CreateInstance() => new(_textWriter, _htmlHelper);
 
+        /// <inheritdoc />
+        protected override void ValidateAttributeValue(string name, string value)
+        {
+            HtmlUrlAttributeDataPolicy dataPolicy = string.Equals(name, "src", StringComparison.OrdinalIgnoreCase) ||
+                                                    string.Equals(name, "srcset", StringComparison.OrdinalIgnoreCase)
+                ? HtmlUrlAttributeDataPolicy.Media
+                : HtmlUrlAttributeDataPolicy.None;
+            HtmlUrlAttributeValidator.Validate(name, value, dataPolicy);
+        }
+
         /// <summary>
         ///     Sets the HTML <c>media</c> attribute.
         /// </summary>

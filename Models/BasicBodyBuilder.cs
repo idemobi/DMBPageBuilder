@@ -65,6 +65,7 @@ namespace DMBPageBuilder
             foreach ((string key, string value) in BodyAttributes)
             {
                 HtmlAttributeNameValidator.Validate(key);
+                HtmlUrlAttributeValidator.Validate(key, value);
                 attrs.Add($@"{key}=""{HtmlEncoder.Default.Encode(value)}""");
             }
 
@@ -87,6 +88,7 @@ namespace DMBPageBuilder
             foreach ((string key, string value) in MainAttributes)
             {
                 HtmlAttributeNameValidator.Validate(key);
+                HtmlUrlAttributeValidator.Validate(key, value);
                 attrs.Add($@"{key}=""{HtmlEncoder.Default.Encode(value)}""");
             }
 

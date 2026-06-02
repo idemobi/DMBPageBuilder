@@ -334,6 +334,7 @@ namespace DMBPageBuilder
                 return This();
             }
 
+            ValidateAttributeValue(name, value);
             _attributes[name] = value;
             return This();
         }
@@ -872,6 +873,7 @@ namespace DMBPageBuilder
                     .Select(x =>
                     {
                         ValidateAttributeName(x.Key);
+                        ValidateAttributeValue(x.Key, x.Value);
 
                         if (IsBooleanAttribute(x.Key, x.Value))
                         {
@@ -946,6 +948,17 @@ namespace DMBPageBuilder
         private static void ValidateAttributeName(string name)
         {
             HtmlAttributeNameValidator.Validate(name);
+        }
+
+        /// <summary>
+        ///     Validates one HTML attribute value before it is rendered.
+        /// </summary>
+        /// <param name="name">The validated HTML attribute name.</param>
+        /// <param name="value">The HTML attribute value to validate.</param>
+        /// <exception cref="ArgumentException">Thrown when a URL attribute value uses an unsafe URL scheme.</exception>
+        protected virtual void ValidateAttributeValue(string name, string value)
+        {
+            HtmlUrlAttributeValidator.Validate(name, value);
         }
 
         /// <summary>

@@ -74,6 +74,7 @@ namespace DMBPageBuilder
 
         private static void WriteLink(TextWriter writer, PageLinkDefinition link)
         {
+            HtmlUrlAttributeValidator.Validate("href", link.Href);
             writer.Write($@"<link rel=""{link.Rel.GetValue()}"" href=""{HtmlEncoder.Default.Encode(AppendVersion(link.Href))}""");
 
             if (!string.IsNullOrWhiteSpace(link.Type))
@@ -149,6 +150,7 @@ namespace DMBPageBuilder
 
         private static void WriteScript(TextWriter writer, PageScriptDefinition script)
         {
+            HtmlUrlAttributeValidator.Validate("src", script.Url ?? string.Empty);
             writer.Write("<script");
             if (!string.IsNullOrWhiteSpace(script.Type))
             {
