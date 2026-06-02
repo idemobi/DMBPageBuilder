@@ -59,11 +59,12 @@ namespace DMBPageBuilder
 
             if (BodyClasses.Count > 0)
             {
-                attrs.Add($@"class=""{string.Join(" ", BodyClasses.Distinct())}""");
+                attrs.Add($@"class=""{HtmlEncoder.Default.Encode(string.Join(" ", BodyClasses.Distinct()))}""");
             }
 
             foreach ((string key, string value) in BodyAttributes)
             {
+                HtmlAttributeNameValidator.Validate(key);
                 attrs.Add($@"{key}=""{HtmlEncoder.Default.Encode(value)}""");
             }
 
@@ -80,11 +81,12 @@ namespace DMBPageBuilder
 
             if (MainClasses.Count > 0)
             {
-                attrs.Add($@"class=""{string.Join(" ", MainClasses.Distinct())}""");
+                attrs.Add($@"class=""{HtmlEncoder.Default.Encode(string.Join(" ", MainClasses.Distinct()))}""");
             }
 
             foreach ((string key, string value) in MainAttributes)
             {
+                HtmlAttributeNameValidator.Validate(key);
                 attrs.Add($@"{key}=""{HtmlEncoder.Default.Encode(value)}""");
             }
 

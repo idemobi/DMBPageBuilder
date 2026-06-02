@@ -945,30 +945,7 @@ namespace DMBPageBuilder
 
         private static void ValidateAttributeName(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("Attribute name cannot be null or empty.", nameof(name));
-            }
-
-            foreach (char character in name)
-            {
-                if (char.IsWhiteSpace(character) || char.IsControl(character))
-                {
-                    throw new ArgumentException($"Attribute name '{name}' contains an invalid character.", nameof(name));
-                }
-
-                switch (character)
-                {
-                    case '"':
-                    case '\'':
-                    case '`':
-                    case '=':
-                    case '<':
-                    case '>':
-                    case '/':
-                        throw new ArgumentException($"Attribute name '{name}' contains an invalid character.", nameof(name));
-                }
-            }
+            HtmlAttributeNameValidator.Validate(name);
         }
 
         /// <summary>
