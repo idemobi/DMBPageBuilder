@@ -214,9 +214,8 @@ namespace DMBPageBuilder
 
         private readonly IHtmlHelper _html;
         private readonly PageInformation _page;
-        StringWriter writerEndBody = new();
-
-        StringWriter writerStartBody = new();
+        private StringWriter _writerEndBody = new(CultureInfo.InvariantCulture);
+        private StringWriter _writerStartBody = new(CultureInfo.InvariantCulture);
 
         #endregion
 
@@ -260,7 +259,7 @@ namespace DMBPageBuilder
                 }
             }
 
-            writer.Write(writerEndBody.ToString());
+            writer.Write(_writerEndBody.ToString());
             writer.Write("<!-- Render content end -->");
             writer.Write("</html>");
             return new HtmlString(writer.ToString());
@@ -277,17 +276,9 @@ namespace DMBPageBuilder
         /// </remarks>
         public IHtmlContent RenderDocumentStart(HttpContext context)
         {
-            _page.BodyBuilder.RenderBodyStart(writerStartBody, _html, _page);
-            _page.BodyBuilder.RenderHeaderStart(writerStartBody, _html, _page);
-            _page.BodyBuilder.RenderHeaderEnd(writerStartBody, _html, _page);
-            _page.BodyBuilder.RenderMainStart(writerStartBody, _html, _page);
-
-
-            _page.BodyBuilder.RenderMainEnd(writerEndBody, _html, _page);
-            _page.BodyBuilder.RenderFooterStart(writerEndBody, _html, _page);
-            _page.BodyBuilder.RenderFooterEnd(writerEndBody, _html, _page);
-            writerEndBody.Write(RenderEndOfBodyScriptsString());
-            _page.BodyBuilder.RenderBodyEnd(writerEndBody, _html, _page);
+            ResetBodyWriters();
+            RenderDocumentStartBody();
+            RenderDocumentEndBody();
 
             using StringWriter writer = new();
             writer.Write("<!doctype html>");
@@ -298,8 +289,31 @@ namespace DMBPageBuilder
             writer.Write($@"<html lang=""{HtmlEncoder.Default.Encode(lang)}"">");
             writer.Write(RenderHeadString());
             writer.Write("<!-- Render content start -->");
-            writer.Write(writerStartBody.ToString());
+            writer.Write(_writerStartBody.ToString());
             return new HtmlString(writer.ToString());
+        }
+
+        private void RenderDocumentEndBody()
+        {
+            _page.BodyBuilder.RenderMainEnd(_writerEndBody, _html, _page);
+            _page.BodyBuilder.RenderFooterStart(_writerEndBody, _html, _page);
+            _page.BodyBuilder.RenderFooterEnd(_writerEndBody, _html, _page);
+            _writerEndBody.Write(RenderEndOfBodyScriptsString());
+            _page.BodyBuilder.RenderBodyEnd(_writerEndBody, _html, _page);
+        }
+
+        private void RenderDocumentStartBody()
+        {
+            _page.BodyBuilder.RenderBodyStart(_writerStartBody, _html, _page);
+            _page.BodyBuilder.RenderHeaderStart(_writerStartBody, _html, _page);
+            _page.BodyBuilder.RenderHeaderEnd(_writerStartBody, _html, _page);
+            _page.BodyBuilder.RenderMainStart(_writerStartBody, _html, _page);
+        }
+
+        private void ResetBodyWriters()
+        {
+            _writerStartBody = new StringWriter(CultureInfo.InvariantCulture);
+            _writerEndBody = new StringWriter(CultureInfo.InvariantCulture);
         }
 
         private string RenderEndOfBodyScriptsString()
