@@ -256,7 +256,8 @@ namespace DMBPageBuilder
                 {
                     if (_page.CookieConsentComposer != null)
                     {
-                        writer.Write(_page.CookieConsentComposer.RenderCookieConsent(_html, _page, cookieConsent, context));
+                        IHtmlContent cookieConsentContent = _page.CookieConsentComposer.RenderCookieConsent(_html, _page, cookieConsent, context);
+                        cookieConsentContent.WriteTo(writer, HtmlEncoder.Default);
                     }
                 }
             }
