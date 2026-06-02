@@ -113,6 +113,7 @@ namespace DMBPageBuilder
         /// <inheritdoc />
         protected override void WriteToCore(TextWriter writer, HtmlEncoder encoder)
         {
+            ValidateTagName();
             ValidateParentContext();
 
             HtmlRenderContext? localContext = null;
@@ -130,7 +131,6 @@ namespace DMBPageBuilder
 
             try
             {
-                ValidateTagName();
                 writer.Write($"<{_tag}{BuildAttributes()}>");
                 writer.Write($"</{_tag}>");
             }

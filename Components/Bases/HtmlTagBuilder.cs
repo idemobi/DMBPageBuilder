@@ -95,10 +95,10 @@ namespace DMBPageBuilder
                 return This();
             }
 
+            ValidateTagName();
             DebugStart();
             _started = true;
             OnBeginRendering();
-            ValidateTagName();
             _textWriter.Write($"<{_tag}{BuildAttributes()}>");
 
             return This();

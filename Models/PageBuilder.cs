@@ -194,7 +194,7 @@ namespace DMBPageBuilder
             }
 
             writer.Write("<script>");
-            writer.Write(script.Script);
+            writer.Write(HtmlRawElementContentEncoder.EncodeClosingElement(script.Script, "script"));
             writer.Write("</script>");
         }
 
@@ -206,7 +206,7 @@ namespace DMBPageBuilder
             }
 
             writer.Write("<style>");
-            writer.Write(stylesheet.Content);
+            writer.Write(HtmlRawElementContentEncoder.EncodeClosingElement(stylesheet.Content, "style"));
             writer.Write("</style>");
         }
 
