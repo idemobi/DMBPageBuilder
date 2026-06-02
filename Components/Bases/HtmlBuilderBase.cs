@@ -977,15 +977,7 @@ namespace DMBPageBuilder
         /// <param name="name">The attribute name to be validated.</param>
         private static void EnsureReservedAttributeIsNotMisused(string name)
         {
-            if (string.Equals(name, "class", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException("Use component class APIs or CSS composer APIs instead of SetAttribute(\"class\", ...).");
-            }
-
-            if (string.Equals(name, "style", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException("Use SetStyle(...) instead of SetAttribute(\"style\", ...).");
-            }
+            HtmlReservedAttributeValidator.EnsureCanSetGenericAttribute(name);
         }
 
         /// <summary>

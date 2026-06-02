@@ -74,7 +74,7 @@ namespace DMBPageBuilder
 
         private static void WriteLink(TextWriter writer, PageLinkDefinition link)
         {
-            HtmlUrlAttributeValidator.Validate("href", link.Href);
+            HtmlAssetUrlValidator.ValidateRequiredUrl("href", link.Href);
             writer.Write($@"<link rel=""{link.Rel.GetValue()}"" href=""{HtmlEncoder.Default.Encode(AppendVersion(link.Href))}""");
 
             if (!string.IsNullOrWhiteSpace(link.Type))
@@ -150,7 +150,7 @@ namespace DMBPageBuilder
 
         private static void WriteScript(TextWriter writer, PageScriptDefinition script)
         {
-            HtmlUrlAttributeValidator.Validate("src", script.Url ?? string.Empty);
+            HtmlAssetUrlValidator.ValidateRequiredUrl("src", script.Url);
             writer.Write("<script");
             if (!string.IsNullOrWhiteSpace(script.Type))
             {
@@ -460,7 +460,7 @@ namespace DMBPageBuilder
 
         private static void WriteFaviconLink(TextWriter writer, string rel, string href, string? type = null, string? sizes = null)
         {
-            HtmlUrlAttributeValidator.Validate("href", href);
+            HtmlAssetUrlValidator.ValidateRequiredUrl("href", href);
             writer.Write($@"<link rel=""{HtmlEncoder.Default.Encode(rel)}"" href=""{HtmlEncoder.Default.Encode(AppendVersion(href))}""");
 
             if (!string.IsNullOrWhiteSpace(type))

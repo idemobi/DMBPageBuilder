@@ -26,6 +26,11 @@ namespace DMBPageBuilder
                     throw new ArgumentException($"HTML tag name '{tagName}' contains an invalid character.", nameof(tagName));
                 }
 
+                if (index == 0 && !char.IsAsciiLetter(character))
+                {
+                    throw new ArgumentException($"HTML tag name '{tagName}' must start with an ASCII letter.", nameof(tagName));
+                }
+
                 bool isValidCharacter = char.IsAsciiLetterOrDigit(character) ||
                                         character == '-' ||
                                         character == ':';

@@ -47,12 +47,29 @@ namespace DMBPageBuilder
 
         #endregion
 
+        #region Static methods
+
+        private static void AddRawAttributes(List<string> attributes, Dictionary<string, string> rawAttributes)
+        {
+            foreach ((string key, string value) in rawAttributes)
+            {
+                HtmlAttributeNameValidator.Validate(key);
+                HtmlReservedAttributeValidator.EnsureCanSetGenericAttribute(key);
+                HtmlUrlAttributeValidator.Validate(key, value);
+                attributes.Add($@"{key}=""{HtmlEncoder.Default.Encode(value)}""");
+            }
+        }
+
+        #endregion
+
         #region Instance methods
 
         /// <summary>
         ///     Renders the encoded attributes and CSS classes for the opening <c>body</c> tag.
         /// </summary>
         /// <returns>The leading-space-prefixed attribute string, or an empty string when no body attributes exist.</returns>
+        /// <exception cref="ArgumentException">Thrown when an attribute name or URL attribute value is invalid.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when raw attributes include reserved <c>class</c> or <c>style</c> attributes.</exception>
         public string RenderBodyAttributes()
         {
             List<string> attrs = new();
@@ -62,12 +79,7 @@ namespace DMBPageBuilder
                 attrs.Add($@"class=""{HtmlEncoder.Default.Encode(string.Join(" ", BodyClasses.Distinct()))}""");
             }
 
-            foreach ((string key, string value) in BodyAttributes)
-            {
-                HtmlAttributeNameValidator.Validate(key);
-                HtmlUrlAttributeValidator.Validate(key, value);
-                attrs.Add($@"{key}=""{HtmlEncoder.Default.Encode(value)}""");
-            }
+            AddRawAttributes(attrs, BodyAttributes);
 
             return attrs.Count > 0 ? " " + string.Join(" ", attrs) : string.Empty;
         }
@@ -76,6 +88,8 @@ namespace DMBPageBuilder
         ///     Renders the encoded attributes and CSS classes for the opening <c>main</c> tag.
         /// </summary>
         /// <returns>The leading-space-prefixed attribute string, or an empty string when no main attributes exist.</returns>
+        /// <exception cref="ArgumentException">Thrown when an attribute name or URL attribute value is invalid.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when raw attributes include reserved <c>class</c> or <c>style</c> attributes.</exception>
         public string RenderMainAttributes()
         {
             List<string> attrs = new();
@@ -85,12 +99,7 @@ namespace DMBPageBuilder
                 attrs.Add($@"class=""{HtmlEncoder.Default.Encode(string.Join(" ", MainClasses.Distinct()))}""");
             }
 
-            foreach ((string key, string value) in MainAttributes)
-            {
-                HtmlAttributeNameValidator.Validate(key);
-                HtmlUrlAttributeValidator.Validate(key, value);
-                attrs.Add($@"{key}=""{HtmlEncoder.Default.Encode(value)}""");
-            }
+            AddRawAttributes(attrs, MainAttributes);
 
             return attrs.Count > 0 ? " " + string.Join(" ", attrs) : string.Empty;
         }

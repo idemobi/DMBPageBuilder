@@ -217,9 +217,11 @@ namespace DMBPageBuilder
         /// <param name="link">The link definition to add.</param>
         /// <returns>The current <see cref="PageInformation" /> for chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="link" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentException">Thrown when <see cref="PageLinkDefinition.Href" /> is empty or unsafe.</exception>
         public PageInformation AddLink(PageLinkDefinition link)
         {
             ArgumentNullException.ThrowIfNull(link);
+            HtmlAssetUrlValidator.ValidateRequiredUrl("href", link.Href);
             Links[link.Href] = link;
             return this;
         }
@@ -256,9 +258,11 @@ namespace DMBPageBuilder
         /// <param name="script">The script definition to add.</param>
         /// <returns>The current <see cref="PageInformation" /> for chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="script" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentException">Thrown when <see cref="PageScriptDefinition.Url" /> is empty or unsafe.</exception>
         public PageInformation AddScript(PageScriptDefinition script)
         {
             ArgumentNullException.ThrowIfNull(script);
+            HtmlAssetUrlValidator.ValidateRequiredUrl("src", script.Url);
             Scripts[script.Url] = script;
             return this;
         }
