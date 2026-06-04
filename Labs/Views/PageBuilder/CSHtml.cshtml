@@ -1,0 +1,274 @@
+﻿@using DMBBootstrapBuilder
+@using DMBPageBuilder
+@using DMBComponentBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("Using in Razor (cshtml)", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:Use Razor for composition, and PageBuilder for rendering discipline.
+            }
+        }
+    }
+}
+
+@* ── Content ── *@
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+
+            @Html.TitleBuilder().SetTitle("Overview", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder integrates naturally into Razor views. It does not replace Razor. Instead, it gives Razor a structured rendering model based on builders, a shared page model, and a consistent document pipeline.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:The most important thing to understand is that a Razor page using PageBuilder is not limited to writing visible HTML. During rendering, components can also contribute to the final document by registering scripts, stylesheets, inline assets, and page-level configuration.
+            }
+
+            @* ── Razor and the shared page model ── *@
+            @Html.TitleBuilder().SetTitle("Razor and the shared page model", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:When a component is rendered inside the body, it may need to declare page-level dependencies. For example, a component may require:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:A JavaScript file 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:A stylesheet 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Inline JavaScript 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Inline CSS 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Page metadata or configuration 
+                }
+            }
+
+            @using (Html.BlockBuilder().AsInfoCallout().Begin())
+            {
+                @using (Html.FlexBlockBuilder().Begin())
+                {
+                    @using (Html.BlockBuilder().AsCalloutIcon().Begin())
+                    {
+                        @using (Html.PB_Span().AddClass("bi bi-lightbulb-fill fs-2 text-info").Begin()) { }
+                    }
+                    @using (Html.BlockBuilder().Begin())
+                    {
+                        @Html.TitleBuilder().SetTitle("Body-first rendering", TitleLevel.Five).AsAlertHeading().Render()
+                        @using (Html.PB_P().AsNoMargin().Begin())
+                        {
+                            @:These dependencies are typically registered through
+                            @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageInformation 
+                }
+                            @: while the body is rendering. This is why the body is often captured first in the layout before the final document shell is emitted.
+                        }
+                    }
+                }
+            }
+
+            @* ── Typical layout pattern ── *@
+            @Html.TitleBuilder().SetTitle("Typical layout pattern", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:In a Razor layout, the common pattern is to render the body into a temporary writer, restore the original writer, then render the final document using the now-complete
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageInformation 
+                }
+                @:.
+            }
+
+            @(Html.CodeBlock(@"@using DMBPageBuilder
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    var originalWriter = ViewContext.Writer;
+    var bodyWriter = new StringWriter();
+
+    try
+    {
+        ViewContext.Writer = bodyWriter;
+        RenderBody().WriteTo(ViewContext.Writer, HtmlEncoder);
+    }
+    finally
+    {
+        ViewContext.Writer = originalWriter;
+    }
+
+    var bodyHtml = bodyWriter.ToString();
+    PageInformation page = PageRegistry.GetPageInformation(Context) ?? new PageInformation();
+    PageBuilder builder = Html.PageBuilder(page);
+}
+
+@builder.RenderDocumentStart()
+@Html.Raw(bodyHtml)
+@builder.RenderDocumentEnd()", CodeLanguage.CSharp)
+                .SetTitle("Typical Razor layout")
+                .SetCopyButton())
+
+            @using (Html.PB_P().Begin())
+            {
+                @:This pattern allows components rendered in the body to enrich the shared page model before the final
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:&lt;head&gt; 
+                }
+                @: section is written.
+            }
+
+            @* ── Using builders inside Razor ── *@
+            @Html.TitleBuilder().SetTitle("Using builders inside a Razor view", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Inside a Razor view, PageBuilder builders can be used to generate reusable, structured HTML. Razor remains the place where page intent is expressed, while builders encapsulate rendering rules and reusable structure.
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Use Razor to compose the page 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Use PageBuilder to structure HTML generation 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Use builders when markup logic becomes repeated or stateful 
+                }
+            }
+
+            @* ── Why this works in Razor ── *@
+            @Html.TitleBuilder().SetTitle("Why this works well in Razor", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Razor remains readable and familiar 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Rendering logic becomes reusable 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Page-level dependencies can still be registered during body rendering 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:The final document remains centrally orchestrated 
+                }
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder does not fight Razor. It gives Razor a stronger rendering discipline.
+            }
+
+            @* ── Recommended usage ── *@
+            @Html.TitleBuilder().SetTitle("Recommended usage", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Use the layout to orchestrate body capture and document rendering 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Keep page-level asset registration inside builders and components 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Use builders for repeated or structural rendering logic 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Keep simple page intent readable in Razor 
+                }
+            }
+
+            @* ── Next Steps ── *@
+            @using (Html.BlockBuilder().AsSidebarNote().Begin())
+            {
+                @using (Html.BlockBuilder().AsTextCenter().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Continue with Using in C#", TitleLevel.Four).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:See how builders can be used outside views for reusable infrastructure.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "CSharp").SetTitle("Using in C# →").SetIcon(IconStruct.Bootstrap("bi-arrow-right")).SetVariant(VariantStyle.Primary)).Render()
+                }
+            }
+
+        }
+    }
+}

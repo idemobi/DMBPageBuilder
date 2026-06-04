@@ -196,7 +196,7 @@ Customizations must remain:
 
 If public rendering behavior, page metadata behavior, or a Razor helper changes, update in the same change set:
 
-- local `README.md`,
+- local `Source/README.md`,
 - relevant XML docs,
 - impacted guidance/examples.
 

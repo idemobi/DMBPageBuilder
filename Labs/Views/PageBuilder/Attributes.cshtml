@@ -1,0 +1,337 @@
+﻿@using DMBBootstrapBuilder
+@using DMBPageBuilder
+@using DMBComponentBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("Attributes", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:Manage HTML attributes through a structured rendering model.
+            }
+        }
+    }
+}
+
+@* ── Content ── *@
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+
+            @Html.TitleBuilder().SetTitle("Why attributes need structure", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Attributes are one of the core responsibilities of PageBuilder. Instead of assembling attribute strings manually inside views or rendering code, PageBuilder provides a structured attribute system shared by all builders.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:In a simple page, manually writing a few HTML attributes is not difficult. In a real component system, however, attributes quickly become dynamic. Conditions, state, composition, accessibility, and reuse all make ad hoc attribute generation harder to maintain.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder solves this by giving builders a centralized way to register, store, and render attributes. This improves consistency, reduces fragile string concatenation, and makes builders easier to understand and maintain.
+            }
+
+            @* ── The attribute model ── *@
+            @Html.TitleBuilder().SetTitle("The attribute model", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:At the base level, builders manage attributes through a dictionary-like internal model. Attributes are accumulated as structured data first, then rendered into final HTML only when the builder writes its output. This makes it possible to:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Set attributes progressively
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Override or remove attributes safely
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Build attributes through fluent APIs
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Keep rendering code readable
+                }
+            }
+
+            @* ── Common attribute categories ── *@
+            @Html.TitleBuilder().SetTitle("Common attribute categories", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder supports several common categories of attributes through dedicated methods or conventions.
+            }
+
+            @* Standard attributes *@
+            @Html.TitleBuilder().SetTitle("Standard attributes", TitleLevel.Three).AsSubSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Standard attributes are handled through the generic attribute API. Builders can set, update, or remove them as part of their internal state before the final HTML is emitted. This keeps attributes aligned with builder state instead of scattering them across view logic. Typical examples include:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:id 
+                }
+                    @:,
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:name 
+                }
+                    @:,
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:role 
+                }
+                    @:,
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:tabindex 
+                }
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Custom attributes specific to a component
+                }
+            }
+
+            @* Data attributes *@
+            @Html.TitleBuilder().SetTitle("Data attributes", TitleLevel.Three).AsSubSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:data-* 
+                }
+                @: attributes are especially important in builder-based systems because they provide a safe way to attach behavior metadata or component state to rendered elements. PageBuilder supports them as structured attributes rather than forcing each builder to hardcode string fragments manually.
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:JavaScript initialization hooks 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Component identifiers 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Custom behavior flags 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Debug markers 
+                }
+            }
+
+            @* ARIA attributes *@
+            @Html.TitleBuilder().SetTitle("ARIA attributes", TitleLevel.Three).AsSubSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Accessibility-related attributes are part of the same structured system. Builders can register
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:aria-* 
+                }
+                @: attributes just like other semantic attributes. This is important because accessible components often require stateful aria values that depend on rendering context. PageBuilder makes it easier to express these values as part of the component logic itself.
+            }
+
+            @* Boolean attributes *@
+            @Html.TitleBuilder().SetTitle("Boolean-like attributes", TitleLevel.Three).AsSubSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Some HTML attributes behave like flags rather than ordinary key-value pairs. A common example is
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:disabled 
+                }
+                @:. PageBuilder treats these attributes deliberately so that builders can express them through structured state instead of relying on fragile conditional string output. This keeps the generated HTML more predictable and the builder code easier to read.
+            }
+
+            @* ── Reserved concerns ── *@
+            @Html.TitleBuilder().SetTitle("Reserved concerns: class and style", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsInfoCallout().Begin())
+            {
+                @using (Html.FlexBlockBuilder().Begin())
+                {
+                    @using (Html.BlockBuilder().AsCalloutIcon().Begin())
+                    {
+                        @using (Html.PB_Span().AddClass("bi bi-lightbulb-fill fs-2 text-info").Begin()) { }
+                    }
+                    @using (Html.BlockBuilder().Begin())
+                    {
+                        @Html.TitleBuilder().SetTitle("Architectural design choice", TitleLevel.Five).AsAlertHeading().Render()
+                        @using (Html.PB_P().AsNoMargin().Begin())
+                        {
+                            @:Although
+                            @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:class 
+                }
+                            @: and
+                            @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:style 
+                }
+                            @: are technically HTML attributes, PageBuilder treats them as reserved concerns with their own dedicated systems. Classes and styles are too important, too stateful, and too compositional to be treated like ordinary attributes.
+                        }
+                    }
+                }
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Component classes are managed through the internal class system 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Reusable class generation is managed through CSS composers 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Inline styles are managed through the style system 
+                }
+            }
+
+            @* ── Pipeline relationship ── *@
+            @Html.TitleBuilder().SetTitle("Why the attribute system matters in the pipeline", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:The attribute system is not isolated from the rest of PageBuilder. Builders use it while rendering inside the broader page pipeline. A builder may generate visible attributes for its output while also participating in page-level registration through
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageInformation 
+                }
+                @:. This is another reason why attributes need to be structured: builders must remain predictable even when rendering becomes layered or stateful.
+            }
+
+            @* ── Recommended usage ── *@
+            @Html.TitleBuilder().SetTitle("Recommended usage", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Use the attribute API for semantic element state 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Use
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:data-* 
+                }
+                    @: attributes for client-side metadata and behavior hooks
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Use
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:aria-* 
+                }
+                    @: attributes deliberately for accessibility
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Do not treat
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:class 
+                }
+                    @: and
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:style 
+                }
+                    @: as ordinary attributes
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Keep attribute logic inside builders instead of spreading it across views 
+                }
+            }
+
+            @* ── Next Steps ── *@
+            @using (Html.BlockBuilder().AsSidebarNote().Begin())
+            {
+                @using (Html.BlockBuilder().AsTextCenter().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Continue with Styles", TitleLevel.Four).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:Understand inline style handling and how it complements the attribute system.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "Styles").SetTitle("Styles →").SetIcon(IconStruct.Bootstrap("bi-arrow-right")).SetVariant(VariantStyle.Primary)).Render()
+                }
+            }
+
+        }
+    }
+}

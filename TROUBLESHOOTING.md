@@ -6,7 +6,7 @@ When copying this file to another PageBuilder ecosystem project, update this sec
 
 - Project name: `DMBPageBuilder`
 - Main troubleshooting areas: page metadata, rendering lifecycle, fluent HTML builders, Razor helpers, localization resources, and web asset registration.
-- Resource folder: `Resources/`
+- Resource folder: `Source/Resources/`
 - Documentation target: `labs_idemobi_com`
 
 ## Localization key fallback text appears
@@ -17,7 +17,7 @@ When copying this file to another PageBuilder ecosystem project, update this sec
 
 ### Checks
 
-1. Confirm key exists in `Resources/*.resx`.
+1. Confirm key exists in `Source/Resources/*.resx`.
 2. Confirm key naming follows `LOCALIZATION_NOMENCLATURE.md`.
 3. Confirm the expected localizer context is used.
 

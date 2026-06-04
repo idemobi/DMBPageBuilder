@@ -21,7 +21,7 @@ When copying this file to another PageBuilder ecosystem project, update this sec
 
 ## 3. Documentation quality
 
-- `README.md` and relevant docs updated for behavior changes.
+- `Source/README.md` and relevant docs updated for behavior changes.
 - Public API XML HeaderDoc exists for new/updated public items.
 - XML tags are valid and useful (`summary`, `param`, `returns`, etc.).
 - Documentation is understandable by both developers and AI assistants.

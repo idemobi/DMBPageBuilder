@@ -1,0 +1,197 @@
+﻿@using DMBBootstrapBuilder
+@using DMBComponentBuilder
+@using DMBEffectBuilder
+@using DMBPageBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("Architecture — PageBuilder", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:A layered rendering foundation built around a shared page model.
+            }
+        }
+    }
+}
+
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+            @* ── 1. Architectural Role ── *@
+            @Html.TitleBuilder().SetTitle("1. Architectural Role", TitleLevel.Two).AsSectionHeading().Render()
+            @using (Html.PB_P().Begin())
+            {
+                @using (Html.PB_Span().AsBold().Begin())
+                {
+                    @:DMBPageBuilder
+                }
+                @: is the foundation layer of the DMB web stack. Its architecture separates document orchestration, HTML generation and component composition so higher-level packages can register assets and render markup without owning the final page shell. PageBuilder provides the page lifecycle, builder base types and structured output model used by BootstrapBuilder, EffectBuilder, ComponentBuilder and DocumentationViewer.
+            }
+            @(Html.ImageRender("/drawio/PageBuilder/architecture-layers.drawio.svg")
+                .Alt("DMBPageBuilder architecture layers diagram")
+                .InlineSvg()
+                .SetWidth(100, UnitSize.percent)
+                .SetBorder()
+                .SetRounded()
+                .Render())
+
+            @* ── 2. Main Layers ── *@
+            @Html.TitleBuilder().SetTitle("2. Main Layers", TitleLevel.Two).AsSubSectionHeading().Render()
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder is organised into three layers. Each layer serves a distinct purpose in the document rendering lifecycle.
+            }
+            @using (Html.RowBuilder().AsPillarGrid().Begin())
+            {
+                @using (Html.ColBuilder().SetCol(ColSize.Col12).SetCol(ColSize.Col4, ResponsiveBreakpoint.Md).Begin())
+                {
+                    @using (Html.BlockBuilder().AsPillarCard().Begin())
+                    {
+                        @using (Html.BlockBuilder().AsTopMargin().Begin())
+                        {
+                            @using (Html.PB_Span().AddClass("bi bi-file-earmark-code text-primary me-1").Begin()) { }
+                            @Html.TitleBuilder().SetTitle("Page Layer", TitleLevel.Five).AsCompact().Render()
+                        }
+                        @using (Html.PB_P().AsSmallMuted().Begin())
+                        {
+                            @:Owns
+                            @using (Html.PB_Span().AsMonospace().Begin())
+                            {
+                                @:PageInformation
+                            }
+                            @:, document start/end rendering, page metadata, scripts, links and body orchestration.
+                        }
+                        @using (Html.PB_Span().AsMonospaceSmall().Begin())
+                        {
+                            @:PageRegistry.GetOrCreatePageInformation(...)
+                        }
+                    }
+                }
+                @using (Html.ColBuilder().SetCol(ColSize.Col12).SetCol(ColSize.Col4, ResponsiveBreakpoint.Md).Begin())
+                {
+                    @using (Html.BlockBuilder().AsPillarCard().Begin())
+                    {
+                        @using (Html.BlockBuilder().AsTopMargin().Begin())
+                        {
+                            @using (Html.PB_Span().AddClass("bi bi-braces text-success me-1").Begin()) { }
+                            @Html.TitleBuilder().SetTitle("Builder Layer", TitleLevel.Five).AsCompact().Render()
+                        }
+                        @using (Html.PB_P().AsSmallMuted().Begin())
+                        {
+                            @:Provides reusable base builders for tags, attributes, styles, classes and fluent rendering behavior.
+                        }
+                        @using (Html.PB_Span().AsMonospaceSmall().Begin())
+                        {
+                            @:HtmlBuilderBase
+                        }
+                    }
+                }
+                @using (Html.ColBuilder().SetCol(ColSize.Col12).SetCol(ColSize.Col4, ResponsiveBreakpoint.Md).Begin())
+                {
+                    @using (Html.BlockBuilder().AsPillarCard().Begin())
+                    {
+                        @using (Html.BlockBuilder().AsTopMargin().Begin())
+                        {
+                            @using (Html.PB_Span().AddClass("bi bi-layers text-warning me-1").Begin()) { }
+                            @Html.TitleBuilder().SetTitle("Composition Layer", TitleLevel.Five).AsCompact().Render()
+                        }
+                        @using (Html.PB_P().AsSmallMuted().Begin())
+                        {
+                            @:Lets higher-level packages assemble reusable UI systems on top of the same rendering lifecycle.
+                        }
+                        @using (Html.PB_Span().AsMonospaceSmall().Begin())
+                        {
+                            @:BootstrapBuilder / EffectBuilder
+                        }
+                    }
+                }
+            }
+
+            @* ── 3. Extension Points ── *@
+            @Html.TitleBuilder().SetTitle("3. Extension Points", TitleLevel.Two).AsSubSectionHeading().Render()
+            @using (Html.PB_P().Begin())
+            {
+                @:Custom builders derived from the PageBuilder base types integrate directly into the rendering lifecycle. Asset registration through the shared page model ensures scripts, stylesheets and metadata are collected before the document head is emitted.
+            }
+            @(Html.CodeBlock(@"// Register a stylesheet from inside a component
+PageInformation page = PageRegistry.GetOrCreatePageInformation(httpContext);
+page.SetStylesheet(""/css/myComponent.css"");
+page.SetScriptFile(""/js/myComponent.js"");", CodeLanguage.CSharp)
+                .SetTitle("Asset registration pattern")
+                .SetCopyButton())
+
+            @* ── Tech Stack ── *@
+            @using (Html.BlockBuilder().AsInfoCallout().Begin())
+            {
+                @using (Html.FlexBlockBuilder().Begin())
+                {
+                    @using (Html.BlockBuilder().AsCalloutIcon().Begin())
+                    {
+                        @using (Html.PB_Span().AddClass("bi bi-gear-fill fs-2 text-info").Begin()) { }
+                    }
+                    @using (Html.BlockBuilder().Begin())
+                    {
+                        @Html.TitleBuilder().SetTitle("Tech Stack", TitleLevel.Five).AsAlertHeading().Render()
+                        @using (Html.BlockBuilder().AsSidebarRow().Begin())
+                        {
+                            @using (Html.PB_Span().AsBold().Begin())
+                            {
+                                @:Backend:
+                            }
+                            @: .NET 10 / ASP.NET Core
+                        }
+                        @using (Html.BlockBuilder().AsSidebarRow().Begin())
+                        {
+                            @using (Html.PB_Span().AsBold().Begin())
+                            {
+                                @:Rendering:
+                            }
+                            @: Body-first pipeline
+                        }
+                        @using (Html.BlockBuilder().AsSidebarRow().Begin())
+                        {
+                            @using (Html.PB_Span().AsBold().Begin())
+                            {
+                                @:Architecture:
+                            }
+                            @: Builder Pattern / Fluent API
+                        }
+                        @using (Html.BlockBuilder().AsSidebarRow().Begin())
+                        {
+                            @using (Html.PB_Span().AsBold().Begin())
+                            {
+                                @:Role:
+                            }
+                            @: Foundation for the DMB stack
+                        }
+                    }
+                }
+            }
+
+            @* ── Next Step ── *@
+            @using (Html.BlockBuilder().AsSidebarNote().Begin())
+            {
+                @using (Html.BlockBuilder().AsTextCenter().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("See it in action", TitleLevel.Four).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:Learn how the body-first pipeline captures components before the document head is emitted.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "RenderingPipeline").SetTitle("Rendering Pipeline").SetIcon(IconStruct.Bootstrap("bi-bezier2")).SetVariant(VariantStyle.Primary)).Render()
+                }
+            }
+        }
+    }
+}

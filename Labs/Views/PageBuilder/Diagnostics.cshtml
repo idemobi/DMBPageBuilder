@@ -1,0 +1,455 @@
+﻿@using DMBBootstrapBuilder
+@using DMBPageBuilder
+@using DMBComponentBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("Debug & Diagnostics", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:Inspect rendering behavior, understand output, and diagnose composition issues.
+            }
+        }
+    }
+}
+
+@* ── Content ── *@
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+
+            @Html.TitleBuilder().SetTitle("Overview", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Rendering systems often fail in subtle ways. A missing class, a misplaced closing tag, a duplicated render, or a missing dependency can break a page without producing an obvious exception. PageBuilder includes diagnostic mechanisms to make these issues easier to identify and understand.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:The goal of diagnostics in PageBuilder is not to replace the rendering model. It is to make the rendering model observable when you need to inspect what happened during page generation.
+            }
+
+            @* ── Why diagnostics matter ── *@
+            @Html.TitleBuilder().SetTitle("Why diagnostics matter", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:As soon as a rendering system becomes layered, debugging output becomes harder. A page may involve:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:The outer document pipeline 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Body capture through a temporary writer 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Page-level dependency registration 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Nested builders 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Scoped
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Begin() 
+                }
+                    @: /
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Dispose() 
+                }
+                    @: rendering
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Reusable CSS composers 
+                }
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:When several of these mechanisms participate in the same page, it becomes important to know which builder rendered what, how many times it rendered, and whether the final output matches the intended structure.
+            }
+
+            @* ── Diagnostic goals ── *@
+            @Html.TitleBuilder().SetTitle("Diagnostic goals", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder diagnostics help answer questions such as:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Which builder produced this HTML fragment? 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Was this builder rendered once or multiple times? 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Did the final output receive the expected attributes and classes? 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Did a component register its page-level dependencies correctly? 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Did rendering occur in the expected order? 
+                }
+            }
+
+            @* ── Builder-level diagnostics ── *@
+            @Html.TitleBuilder().SetTitle("Builder-level diagnostics", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:At the builder level, PageBuilder can expose metadata that helps identify the origin of rendered output. In debug scenarios, a builder can annotate its output with diagnostic attributes that make the rendering process easier to inspect directly in the browser.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:Typical information includes:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:The builder type that produced the fragment 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:A render counter showing how many times a builder instance rendered 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Optional debug-oriented
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:data-* 
+                }
+                    @: attributes
+                }
+            }
+
+            @* ── Render counters ── *@
+            @Html.TitleBuilder().SetTitle("Why render counters help", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:A common category of rendering bug is duplicate rendering. A component may render more than once because of an unexpected lifecycle path, an incorrect helper usage pattern, or a composition bug.
+            }
+
+            @using (Html.BlockBuilder().AsInfoCallout().Begin())
+            {
+                @using (Html.FlexBlockBuilder().Begin())
+                {
+                    @using (Html.BlockBuilder().AsCalloutIcon().Begin())
+                    {
+                        @using (Html.PB_Span().AddClass("bi bi-lightbulb-fill fs-2 text-info").Begin()) { }
+                    }
+                    @using (Html.BlockBuilder().Begin())
+                    {
+                        @Html.TitleBuilder().SetTitle("Render counter signal", TitleLevel.Five).AsAlertHeading().Render()
+                        @using (Html.PB_P().AsNoMargin().Begin())
+                        {
+                            @:If a fragment that should render once is shown with a higher render count, the issue becomes much easier to localize. This kind of signal is often more useful than a generic stack trace because it explains what happened in the final HTML output.
+                        }
+                    }
+                }
+            }
+
+            @* ── Diagnostics and the pipeline ── *@
+            @Html.TitleBuilder().SetTitle("Diagnostics and the rendering pipeline", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Diagnostics are especially useful in the PageBuilder pipeline because the final document is assembled in multiple stages. The body may be captured first, components may register dependencies during rendering, and the final document may be emitted only afterward.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:In this model, debugging output is not only about visible HTML. It is also about understanding:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:When body rendering happened 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Which builders participated during capture 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Whether page-level state was enriched as expected 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Whether the final document structure matches the pipeline design 
+                }
+            }
+
+            @* ── Diagnostics and PageInformation ── *@
+            @Html.TitleBuilder().SetTitle("Diagnostics and PageInformation", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Some rendering issues are not caused by the markup itself, but by missing page-level dependencies. A component may render correctly but fail functionally because its script or stylesheet was not registered into
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageInformation 
+                }
+                @:.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:When diagnosing such issues, you often need to inspect not only the final HTML, but also whether the correct page-level state was accumulated during rendering. Typical questions include:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Was the expected script file registered? 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Was the stylesheet added to the page model? 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Was inline JavaScript emitted in the correct section? 
+                }
+            }
+
+            @* ── Typical issue categories ── *@
+            @Html.TitleBuilder().SetTitle("Typical categories of issues", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Duplicate rendering 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Unexpected rendering order 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Missing or malformed attributes 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Incorrect class composition 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Missing page-level dependencies 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Broken builder nesting 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Invalid scoped rendering behavior 
+                }
+            }
+
+            @* ── Recommended diagnostic workflow ── *@
+            @Html.TitleBuilder().SetTitle("Recommended diagnostic workflow", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:When a rendering problem appears, a good debugging approach is usually:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Inspect the final HTML fragment in the browser 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Check builder-level debug metadata, if enabled 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Verify whether the fragment was rendered the expected number of times 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Check whether the expected classes and attributes are present 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Check whether the component registered the expected page-level dependencies 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Confirm that the issue comes from rendering logic rather than CSS or JavaScript behavior alone 
+                }
+            }
+
+            @* ── Not for business logic ── *@
+            @Html.TitleBuilder().SetTitle("Diagnostics are for understanding, not for business logic", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Diagnostic metadata should help explain output. It should not become part of normal application behavior. Rendering diagnostics exist to support development, framework evolution, and component debugging. They should remain a development aid rather than a dependency of the application itself.
+            }
+
+            @* ── Recommended usage ── *@
+            @Html.TitleBuilder().SetTitle("Recommended usage", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Use diagnostic metadata during framework development and component debugging 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Inspect rendered HTML when debugging composition issues 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Use render counters to detect duplicate rendering 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Check
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageInformation 
+                }
+                    @: when diagnosing missing assets
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Keep diagnostics separate from application logic 
+                }
+            }
+
+        }
+    }
+}

@@ -1,0 +1,216 @@
+﻿@using DMBBootstrapBuilder
+@using DMBPageBuilder
+@using DMBComponentBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("Layout & BodyBuilder", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:Control the body shell without breaking the page pipeline.
+            }
+        }
+    }
+}
+
+@* ── Content ── *@
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+
+            @Html.TitleBuilder().SetTitle("What BodyBuilder is responsible for", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder separates the document lifecycle from the body shell. The document lifecycle is handled by
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageBuilder 
+                }
+                @:, while the structure of the body itself is delegated to an
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:IBodyBuilder 
+                }
+                @:. This makes it possible to customize how the header, main content area, and footer are structured, while preserving a single and consistent rendering pipeline for the page as a whole.
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:A body builder is responsible for framing the body-level structure of the page. Depending on its implementation, it can control:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:The opening body tag 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:The header section 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:The main section 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:The footer section 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:The closing body structure 
+                }
+            }
+
+            @* ── Pipeline fit ── *@
+            @Html.TitleBuilder().SetTitle("How it fits into the pipeline", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:The PageBuilder pipeline captures the body, lets components enrich
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageInformation 
+                }
+                @:, then emits the final document. Within that final document rendering process, the active
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:IBodyBuilder 
+                }
+                @: defines the body shell used around the captured content.
+            }
+
+            @using (Html.BlockBuilder().AsInfoCallout().Begin())
+            {
+                @using (Html.FlexBlockBuilder().Begin())
+                {
+                    @using (Html.BlockBuilder().AsCalloutIcon().Begin())
+                    {
+                        @using (Html.PB_Span().AddClass("bi bi-lightbulb-fill fs-2 text-info").Begin()) { }
+                    }
+                    @using (Html.BlockBuilder().Begin())
+                    {
+                        @Html.TitleBuilder().SetTitle("Key distinction", TitleLevel.Five).AsAlertHeading().Render()
+                        @using (Html.PB_P().AsNoMargin().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageBuilder 
+                }
+                            @: controls the document lifecycle.
+                            @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:IBodyBuilder 
+                }
+                            @: controls the body framing inside that lifecycle. BodyBuilder does not replace the pipeline — it participates in it.
+                        }
+                    }
+                }
+            }
+
+            @* ── Why separation matters ── *@
+            @Html.TitleBuilder().SetTitle("Why this separation matters", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:In many ASP.NET applications, body structure ends up spread across layouts, partials, helpers, and view-specific conventions. Over time, this makes the page shell harder to understand and harder to standardize.
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:By introducing
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:IBodyBuilder 
+                }
+                @:, PageBuilder gives you a dedicated place to define body-level structure without mixing it into unrelated rendering code. This allows PageBuilder to remain generic while still supporting application-level layout conventions.
+            }
+
+            @* ── Typical usage ── *@
+            @Html.TitleBuilder().SetTitle("Typical usage", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:A body builder is generally configured at the page level and then used by
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageBuilder 
+                }
+                @: during the final document rendering process. This means pages and components do not need to know all structural details of the outer body shell. They render their content and contribute dependencies to the shared page model. The body shell is then assembled centrally.
+            }
+
+            @* ── Recommended usage ── *@
+            @Html.TitleBuilder().SetTitle("Recommended usage", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Use
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:IBodyBuilder 
+                }
+                    @: to define application-level body conventions
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Keep the document lifecycle inside
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageBuilder 
+                }
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Do not scatter header, main, and footer logic across many views when a body builder can centralize it 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Keep the shared page model compatible with body-first rendering 
+                }
+            }
+
+            @* ── Next Steps ── *@
+            @using (Html.BlockBuilder().AsSidebarNote().Begin())
+            {
+                @using (Html.BlockBuilder().AsTextCenter().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Continue with HtmlBuilderBase", TitleLevel.Four).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:Understand the technical foundation shared by all builders.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "HtmlBuilderBase").SetTitle("HtmlBuilderBase →").SetIcon(IconStruct.Bootstrap("bi-arrow-right")).SetVariant(VariantStyle.Primary)).Render()
+                }
+            }
+
+        }
+    }
+}

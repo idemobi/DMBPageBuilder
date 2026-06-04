@@ -1,0 +1,262 @@
+﻿@using DMBBootstrapBuilder
+@using DMBPageBuilder
+@using DMBComponentBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("Styles", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:Manage inline styles through a structured rendering system.
+            }
+        }
+    }
+}
+
+@* ── Content ── *@
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+
+            @Html.TitleBuilder().SetTitle("Overview", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:In PageBuilder, inline styles are treated as a first-class rendering concern. Instead of concatenating style strings manually, builders manage styles through a dedicated internal system that keeps style output explicit, structured, and predictable.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:This is important because style generation often becomes dynamic in real components. Layout state, sizing rules, temporary overrides, and internal rendering decisions all make ad hoc style string assembly harder to maintain over time.
+            }
+
+            @* ── Why styles need a dedicated system ── *@
+            @Html.TitleBuilder().SetTitle("Why styles need a dedicated system", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsInfoCallout().Begin())
+            {
+                @using (Html.FlexBlockBuilder().Begin())
+                {
+                    @using (Html.BlockBuilder().AsCalloutIcon().Begin())
+                    {
+                        @using (Html.PB_Span().AddClass("bi bi-lightbulb-fill fs-2 text-info").Begin()) { }
+                    }
+                    @using (Html.BlockBuilder().Begin())
+                    {
+                        @Html.TitleBuilder().SetTitle("Deliberate design decision", TitleLevel.Five).AsAlertHeading().Render()
+                        @using (Html.PB_P().AsNoMargin().Begin())
+                        {
+                            @:Although the
+                            @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:style 
+                }
+                            @: attribute is technically just another HTML attribute, PageBuilder does not treat it like an ordinary key-value pair. Inline styles are often built progressively, modified conditionally, overridden temporarily, and composed from multiple rendering decisions — so they require their own structured model.
+                        }
+                    }
+                }
+            }
+
+            @* ── The style model ── *@
+            @Html.TitleBuilder().SetTitle("The style model", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:At the base level, PageBuilder stores inline styles as structured key-value entries. A builder can register style values incrementally, and the final
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:style 
+                }
+                @: attribute is generated only when the builder renders itself. This approach makes it possible to:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Add styles progressively 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Replace styles safely 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Remove styles when they are no longer needed 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Keep rendering code readable and explicit 
+                }
+            }
+
+            @* ── How styles differ from classes ── *@
+            @Html.TitleBuilder().SetTitle("How styles differ from classes", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder makes a clear distinction between classes and styles.
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Classes express reusable styling identity and reusable styling rules 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Inline styles express direct rendering decisions tied to the current output 
+                }
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:In practice: use classes and CSS composers for reusable styling systems, and use inline styles when the rendering output requires a direct style value. This distinction helps prevent builders from mixing structural styling concerns with highly local rendering concerns.
+            }
+
+            @* ── Typical use cases ── *@
+            @Html.TitleBuilder().SetTitle("Typical use cases", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Inline styles are particularly useful when a component needs to express rendering values that are difficult or unnecessary to encode through reusable CSS classes. Typical examples include:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Dynamic width or height values 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Runtime spacing adjustments 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Inline positioning values 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Temporary visual overrides required by component state 
+                }
+            }
+
+            @* ── Why structured styles matter ── *@
+            @Html.TitleBuilder().SetTitle("Why structured styles matter in complex builders", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:As builders become more compositional, styles are often influenced by internal rendering decisions. A builder may need to temporarily apply a style, render a fragment, then restore the previous style state. A structured style system makes this far safer than raw style string concatenation. It also keeps builder behavior more understandable when internal rendering paths become more advanced.
+            }
+
+            @* ── Relationship with HtmlBuilderBase ── *@
+            @Html.TitleBuilder().SetTitle("Relationship with HtmlBuilderBase", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:HtmlBuilderBase 
+                }
+                @: provides the internal style infrastructure used by all builders. It gives derived builders a consistent way to register style values and ensures that the final inline style attribute is emitted through the common rendering contract. This means style handling is not reinvented in every component — it is part of the shared rendering foundation.
+            }
+
+            @* ── Why styles matter in the full pipeline ── *@
+            @Html.TitleBuilder().SetTitle("Why styles matter in the full pipeline", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Inline styles are generated at the builder level, but builders themselves render inside the broader PageBuilder pipeline. This means style output is part of a larger rendering system where consistency, composability, and predictability are important. Even though styles affect only the rendered HTML fragment, they still participate in the architectural discipline of the framework.
+            }
+
+            @* ── Recommended usage ── *@
+            @Html.TitleBuilder().SetTitle("Recommended usage", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Use inline styles for direct rendering values that belong to the component output 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Use classes and CSS composers for reusable styling logic 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Do not treat
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:style 
+                }
+                    @: as a generic attribute
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Keep style registration close to the rendering logic that requires it 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Prefer structured style management over concatenated inline style strings 
+                }
+            }
+
+            @* ── Next Steps ── *@
+            @using (Html.BlockBuilder().AsSidebarNote().Begin())
+            {
+                @using (Html.BlockBuilder().AsTextCenter().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Continue with CSS Composers", TitleLevel.Four).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:Understand reusable class generation and how it complements the inline style system.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "CSSSystem").SetTitle("CSS Composers →").SetIcon(IconStruct.Bootstrap("bi-arrow-right")).SetVariant(VariantStyle.Primary)).Render()
+                }
+            }
+
+        }
+    }
+}

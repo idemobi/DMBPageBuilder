@@ -1,0 +1,490 @@
+﻿@using DMBBootstrapBuilder
+@using DMBPageBuilder
+@using DMBComponentBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("HtmlBuilderBase", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:The technical foundation shared by all builders.
+            }
+        }
+    }
+}
+
+@* ── Content ── *@
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+
+            @Html.TitleBuilder().SetTitle("Overview", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:HtmlBuilderBase&lt;TBuilder&gt; 
+                }
+                @: is the core abstraction behind the PageBuilder builder system. It defines the shared mechanisms used by builders to manage attributes, styles, classes, internal state, cloning, and rendering.
+            }
+
+            @using (Html.BlockBuilder().AsInfoCallout().Begin())
+            {
+                @using (Html.FlexBlockBuilder().Begin())
+                {
+                    @using (Html.BlockBuilder().AsCalloutIcon().Begin())
+                    {
+                        @using (Html.PB_Span().AddClass("bi bi-lightbulb-fill fs-2 text-info").Begin()) { }
+                    }
+                    @using (Html.BlockBuilder().Begin())
+                    {
+                        @Html.TitleBuilder().SetTitle("Most important type to understand", TitleLevel.Five).AsAlertHeading().Render()
+                        @using (Html.PB_P().AsNoMargin().Begin())
+                        {
+                            @:If you want to understand how PageBuilder works internally, or if you want to build your own custom builders,
+                            @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:HtmlBuilderBase 
+                }
+                            @: is one of the most important types to understand.
+                        }
+                    }
+                }
+            }
+
+            @* ── Why a common base exists ── *@
+            @Html.TitleBuilder().SetTitle("Why a common base exists", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Without a shared base class, every builder would need to reinvent the same rendering infrastructure:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Attribute storage 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Style storage 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:CSS class accumulation 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Internal state management 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Rendering output 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Cloning behavior 
+                }
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:This would quickly make the framework inconsistent and fragile.
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:HtmlBuilderBase 
+                }
+                @: solves that by centralizing these responsibilities.
+            }
+
+            @* ── Main responsibilities ── *@
+            @Html.TitleBuilder().SetTitle("Main responsibilities", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:The base class is responsible for the low-level infrastructure required by builders. It typically handles:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:HTML attributes 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Inline styles 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Component classes 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:CSS composers 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Internal key-value storage 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:The rendering contract 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Builder cloning 
+                }
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Derived builders then add their own rendering semantics on top of that shared foundation.
+            }
+
+            @* ── Attributes ── *@
+            @Html.TitleBuilder().SetTitle("Attributes", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:HtmlBuilderBase 
+                }
+                @: provides the common APIs used to manage HTML attributes. This includes generic attributes and convenience APIs for common patterns such as
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:data-* 
+                }
+                @: and
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:aria-* 
+                }
+                @:.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:The attribute system is structured. Builders do not need to assemble raw attribute strings by hand. This improves correctness and keeps rendering logic readable. It is also important to note that
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:class 
+                }
+                @: and
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:style 
+                }
+                @: are treated as reserved concerns — they are not meant to be manipulated as ordinary attributes because they have dedicated systems of their own.
+            }
+
+            @* ── Styles ── *@
+            @Html.TitleBuilder().SetTitle("Styles", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:The base class provides a structured way to manage inline styles through a style dictionary. This allows a builder to incrementally register styles before they are finally rendered into the element.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:This is particularly useful when rendering is stateful or when internal builder composition temporarily modifies style output. Inline styles remain explicit, but they are no longer fragile string concatenations scattered across rendering code.
+            }
+
+            @* ── Component classes ── *@
+            @Html.TitleBuilder().SetTitle("Component classes", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:HtmlBuilderBase 
+                }
+                @: also manages component-level CSS classes. These classes form the direct CSS identity of the builder before additional styling rules are contributed by CSS composers. The base system distinguishes between internal component classes and reusable class logic generated by composers.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:This distinction is important because not all CSS class logic belongs at the same level. Some class changes are local and temporary. Others represent reusable style systems.
+            }
+
+            @* ── CSS composers ── *@
+            @Html.TitleBuilder().SetTitle("CSS composers", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:The base class supports CSS composers through a dedicated composer collection. A composer is responsible for generating classes according to a reusable styling rule set. This allows builders to keep structural rendering logic separate from reusable CSS generation logic, and makes the framework easier to extend.
+            }
+
+            @* ── Internal state ── *@
+            @Html.TitleBuilder().SetTitle("Internal state", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:HtmlBuilderBase 
+                }
+                @: provides an internal key-value store used by builders to keep structured state without exposing every implementation detail as a field or public property. This internal state system is especially useful for:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Derived builder configuration 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Scoped rendering flags 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Reusable internal conventions 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Debug and render metadata 
+                }
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:This is one of the reasons builders can remain fluent and compact while still supporting more advanced behavior.
+            }
+
+            @* ── Rendering contract ── *@
+            @Html.TitleBuilder().SetTitle("Rendering contract", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:The base class defines the rendering contract through
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:WriteTo(...) 
+                }
+                @: and
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:WriteToCore(...) 
+                }
+                @:.
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:WriteTo(...) 
+                }
+                @: is responsible for the shared rendering flow. It ensures that common processing such as debug metadata is applied consistently before delegating the actual HTML generation to
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:WriteToCore(...) 
+                }
+                @:. Derived builders do not replace the full rendering model — they implement their specific rendering behavior inside the contract defined by the base class.
+            }
+
+            @* ── Cloning ── *@
+            @Html.TitleBuilder().SetTitle("Cloning", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Builders in PageBuilder are expected to support cloning when their design requires reuse or composition.
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:HtmlBuilderBase 
+                }
+                @: provides the shared cloning pattern and lets derived builders extend it through their own internal clone logic.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:This matters because builder composition often involves copying internal state, classes, composers, styles, and additional component-specific configuration. A correct cloning model helps keep builders predictable and avoids shared mutable state bugs.
+            }
+
+            @* ── How derived builders use it ── *@
+            @Html.TitleBuilder().SetTitle("How derived builders use it", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:A derived builder usually does three things on top of
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:HtmlBuilderBase 
+                }
+                @::
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Defines its own semantic state 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Implements its own rendering logic 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Exposes its own fluent API 
+                }
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Everything else — attributes, styles, classes, rendering flow, composers, and internal state — comes from the base class. This is why
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:HtmlBuilderBase 
+                }
+                @: is so central to the architecture of PageBuilder.
+            }
+
+            @* ── Why it matters in the full pipeline ── *@
+            @Html.TitleBuilder().SetTitle("Why HtmlBuilderBase matters in the full pipeline", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Builders do not live outside the PageBuilder pipeline. While rendering, they may not only emit HTML, but also contribute to the shared
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageInformation 
+                }
+                @: used by the final document pipeline. This means the base builder model is part of a larger system:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Builders generate HTML through a shared contract 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Builders can enrich the shared page model during rendering 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:The final document is assembled afterward using the complete page state 
+                }
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:This is one of the reasons the builder base class must remain disciplined and predictable.
+            }
+
+            @* ── Recommended usage ── *@
+            @Html.TitleBuilder().SetTitle("Recommended usage", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Use
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:HtmlBuilderBase 
+                }
+                    @: as the foundation for custom builders
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Keep
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:class 
+                }
+                    @: and
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:style 
+                }
+                    @: inside their dedicated systems
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Use composers for reusable CSS logic 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Use internal state deliberately and consistently 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Respect the rendering contract instead of bypassing it 
+                }
+            }
+
+            @* ── Next Steps ── *@
+            @using (Html.BlockBuilder().AsSidebarNote().Begin())
+            {
+                @using (Html.BlockBuilder().AsTextCenter().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Continue with Attributes", TitleLevel.Four).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:Understand the attribute model in more detail and how it is managed by builders.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "Attributes").SetTitle("Attributes →").SetIcon(IconStruct.Bootstrap("bi-arrow-right")).SetVariant(VariantStyle.Primary)).Render()
+                }
+            }
+
+        }
+    }
+}

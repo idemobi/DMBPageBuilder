@@ -1,0 +1,305 @@
+﻿@using DMBBootstrapBuilder
+@using DMBComponentBuilder
+@using DMBEffectBuilder
+@using DMBPageBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("Introduction — PageBuilder", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:The HTML rendering foundation for the DMB builder stack.
+            }
+            @using (Html.FlexBlockBuilder().SetJustifyContentCenter().WithGap(Old_Gap.Gap2).Begin())
+            {
+                @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "GettingStarted").SetTitle("Get Started").SetIcon(IconStruct.Bootstrap("bi-play-fill")).SetVariant(VariantStyle.Primary)).Render()
+            }
+        }
+    }
+}
+
+@* ── 3 highlights ── *@
+@using (Html.BlockBuilder().AsSectionContentTop().Begin())
+{
+    @using (Html.RowBuilder().AsPillarGrid().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).SetCol(ColSize.Col4, ResponsiveBreakpoint.Md).Begin())
+        {
+            @using (Html.BlockBuilder().AsSidebarCard().Begin())
+            {
+                @using (Html.BlockBuilder().AsPaddedBlock().Begin())
+                {
+                    @using (Html.PB_Span().AddClass("bi bi-arrow-repeat fs-2 text-primary d-block mb-2").Begin()) { }
+                    @using (Html.PB_Span().AsSemiBold().Begin())
+                    {
+                        @:Rendering Pipeline
+                    }
+                    @using (Html.PB_P().AsSmallMuted().AsNoMargin().Begin())
+                    {
+                        @:Captures the body first, lets components register page-level dependencies, then renders the final document.
+                    }
+                }
+            }
+        }
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).SetCol(ColSize.Col4, ResponsiveBreakpoint.Md).Begin())
+        {
+            @using (Html.BlockBuilder().AsSidebarCard().Begin())
+            {
+                @using (Html.BlockBuilder().AsPaddedBlock().Begin())
+                {
+                    @using (Html.PB_Span().AddClass("bi bi-braces fs-2 text-success d-block mb-2").Begin()) { }
+                    @using (Html.PB_Span().AsSemiBold().Begin())
+                    {
+                        @:Builder Primitives
+                    }
+                    @using (Html.PB_P().AsSmallMuted().AsNoMargin().Begin())
+                    {
+                        @:Provides the base classes and conventions used to compose tags, attributes, styles and reusable rendering blocks.
+                    }
+                }
+            }
+        }
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).SetCol(ColSize.Col4, ResponsiveBreakpoint.Md).Begin())
+        {
+            @using (Html.BlockBuilder().AsSidebarCard().Begin())
+            {
+                @using (Html.BlockBuilder().AsPaddedBlock().Begin())
+                {
+                    @using (Html.PB_Span().AddClass("bi bi-layers fs-2 text-warning d-block mb-2").Begin()) { }
+                    @using (Html.PB_Span().AsSemiBold().Begin())
+                    {
+                        @:Integration Base
+                    }
+                    @using (Html.PB_P().AsSmallMuted().AsNoMargin().Begin())
+                    {
+                        @:Supports higher-level packages such as DMBBootstrapBuilder, DMBEffectBuilder and DMBDocumentationViewer.
+                    }
+                }
+            }
+        }
+    }
+}
+
+@* ── What is + preview ── *@
+@using (Html.BlockBuilder().AsSectionContent().Begin())
+{
+    @using (Html.RowBuilder().SetGapY(Gap.G5).SetAlignItems(AlignItems.Center).Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).SetCol(ColSize.Col7, ResponsiveBreakpoint.Lg).Begin())
+        {
+            @Html.TitleBuilder().SetTitle("What is PageBuilder?", TitleLevel.Two).AsSectionHeading().Render()
+            @using (Html.PB_P().Begin())
+            {
+                @using (Html.PB_Span().AsBold().Begin())
+                {
+                    @:DMBPageBuilder
+                }
+                @: is the lowest-level rendering package in the stack. It gives ASP.NET Core applications a disciplined way to produce HTML from C# builders, while keeping page metadata, body rendering, attributes, classes, styles, scripts and links inside a predictable pipeline.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:Use it when you want explicit server-side HTML generation without letting view helpers, partials, inline conditions and duplicated attribute logic grow independently. PageBuilder is intentionally generic: it does not try to be Bootstrap, an effect library or a documentation engine — it is the foundation those packages build on.
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @using (Html.PB_Span().AsBold().Begin())
+                    {
+                        @:Deterministic HTML Output:
+                    }
+                    @: The same builder call produces the same markup every time — no view state, no hidden conditionals.
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @using (Html.PB_Span().AsBold().Begin())
+                    {
+                        @:Dependency Collection Before Render:
+                    }
+                    @: Scripts, stylesheets and metadata are registered during body rendering, then flushed in the correct document positions.
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @using (Html.PB_Span().AsBold().Begin())
+                    {
+                        @:Foundation for All Builders:
+                    }
+                    @: Every package in the DMB stack inherits PageBuilder's composition model, ensuring consistent rendering behaviour across the ecosystem.
+                }
+            }
+        }
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).SetCol(ColSize.Col5, ResponsiveBreakpoint.Lg).Begin())
+        {
+            @using (Html.BlockBuilder().AsSidebarCard().Begin())
+            {
+                @using (Html.BlockBuilder().AsPreviewWrapper().Begin())
+                {
+                    @(Html.CodeBlock(@"PageInformation page =
+    PageRegistry.GetOrCreatePageInformation(
+        httpContext);
+
+page.SetScriptFile(""/js/myScript.js"");
+page.SetStylesheet(""/css/myStyle.css"");", CodeLanguage.CSharp))
+                }
+                @using (Html.BlockBuilder().AsPaddedBlock().Begin())
+                {
+                    @using (Html.PB_P().AsSmallMuted().AsNoMargin().Begin())
+                    {
+                        @:How PageBuilder registers page-level assets during the rendering pipeline.
+                    }
+                }
+            }
+        }
+    }
+}
+
+@* ── Three Pillars ── *@
+@using (Html.BlockBuilder().AsSectionContent().Begin())
+{
+    @using (Html.BlockBuilder().AsTextCenter().Begin())
+    {
+        @Html.TitleBuilder().SetTitle("Three Pillars of PageBuilder", TitleLevel.Two).AsSectionHeading().Render()
+        @using (Html.PB_P().AsMuted().Begin())
+        {
+            @:PageBuilder is organised around three core responsibilities that all higher-level packages rely on.
+        }
+    }
+    @using (Html.RowBuilder().AsPillarGrid().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).SetCol(ColSize.Col4, ResponsiveBreakpoint.Md).Begin())
+        {
+            @using (Html.BlockBuilder().AsPillarCard().Begin())
+            {
+                @using (Html.BlockBuilder().AsTopMargin().Begin())
+                {
+                    @using (Html.PB_Span().AddClass("bi bi-arrow-repeat text-primary me-1").Begin()) { }
+                    @Html.TitleBuilder().SetTitle("Rendering Pipeline", TitleLevel.Five).AsCompact().Render()
+                }
+                @using (Html.PB_P().AsSmallMuted().Begin())
+                {
+                    @:Captures the body first, lets components register page-level dependencies, then renders the final document.
+                }
+                @using (Html.PB_Span().AsMonospaceSmall().Begin())
+                {
+                    @:PageRegistry
+                }
+            }
+        }
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).SetCol(ColSize.Col4, ResponsiveBreakpoint.Md).Begin())
+        {
+            @using (Html.BlockBuilder().AsPillarCard().Begin())
+            {
+                @using (Html.BlockBuilder().AsTopMargin().Begin())
+                {
+                    @using (Html.PB_Span().AddClass("bi bi-braces text-success me-1").Begin()) { }
+                    @Html.TitleBuilder().SetTitle("Builder Primitives", TitleLevel.Five).AsCompact().Render()
+                }
+                @using (Html.PB_P().AsSmallMuted().Begin())
+                {
+                    @:Provides the base classes and conventions used to compose tags, attributes, styles and reusable rendering blocks.
+                }
+                @using (Html.PB_Span().AsMonospaceSmall().Begin())
+                {
+                    @:HtmlComponentBuilderBase&lt;T&gt;
+                }
+            }
+        }
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).SetCol(ColSize.Col4, ResponsiveBreakpoint.Md).Begin())
+        {
+            @using (Html.BlockBuilder().AsPillarCard().Begin())
+            {
+                @using (Html.BlockBuilder().AsTopMargin().Begin())
+                {
+                    @using (Html.PB_Span().AddClass("bi bi-layers text-warning me-1").Begin()) { }
+                    @Html.TitleBuilder().SetTitle("Integration Base", TitleLevel.Five).AsCompact().Render()
+                }
+                @using (Html.PB_P().AsSmallMuted().Begin())
+                {
+                    @:Supports higher-level packages such as
+                    @using (Html.PB_Span().AsMonospace().Begin())
+                    {
+                        @:DMBBootstrapBuilder
+                    }
+                    @:,
+                    @using (Html.PB_Span().AsMonospace().Begin())
+                    {
+                        @:DMBEffectBuilder
+                    }
+                    @: and
+                    @using (Html.PB_Span().AsMonospace().Begin())
+                    {
+                        @:DMBDocumentationViewer
+                    }
+                    @:.
+                }
+                @using (Html.PB_Span().AsMonospaceSmall().Begin())
+                {
+                    @:PageInformation
+                }
+            }
+        }
+    }
+}
+
+@* ── Philosophy + Next Step ── *@
+@using (Html.BlockBuilder().AsSectionContent().Begin())
+{
+    @using (Html.FlexBlockBuilder().WithGap(Old_Gap.Gap3).SetAlignItemsStretch().Begin())
+    {
+        @using (Html.BlockBuilder().AsInfoCallout().SetStyle("margin", "0").SetStyle("flex", "2").Begin())
+        {
+            @using (Html.FlexBlockBuilder().Begin())
+            {
+                @using (Html.BlockBuilder().AsCalloutIcon().Begin())
+                {
+                    @using (Html.PB_Span().AddClass("bi bi-lightbulb-fill fs-2 text-info").Begin()) { }
+                }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Core Philosophy", TitleLevel.Four).AsAlertHeading().Render()
+                    @using (Html.PB_P().AsNoMargin().Begin())
+                    {
+                        @:We believe HTML generation should be explicit and predictable. When you use
+                        @using (Html.PB_Span().AsMonospace().Begin())
+                        {
+                            @:HtmlComponentBuilderBase&lt;T&gt;
+                        }
+                        @:, you control every attribute, class, and rendered element — no hidden markup, no magic template interpolation. What you build is exactly what the browser receives.
+                    }
+                }
+            }
+        }
+        @using (Html.BlockBuilder().AsSidebarCard().SetStyle("flex", "1").Begin())
+        {
+            @using (Html.BlockBuilder().AsPaddedBlock().SetStyle("height", "100%").Begin())
+            {
+                @using (Html.FlexBlockBuilder().SetFlexColumn().SetAlignItemsStart().SetJustifyContentCenter().SetStyle("height", "100%").Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Next Step", TitleLevel.Five).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:Learn how to integrate the layout pipeline in your ASP.NET Core project.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "GettingStarted").SetTitle("Getting Started").SetIcon(IconStruct.Bootstrap("bi-play-fill")).SetVariant(VariantStyle.Primary)).Render()
+                }
+            }
+        }
+    }
+}

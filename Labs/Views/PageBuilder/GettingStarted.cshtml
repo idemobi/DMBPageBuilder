@@ -1,0 +1,170 @@
+﻿@using DMBBootstrapBuilder
+@using DMBComponentBuilder
+@using DMBEffectBuilder
+@using DMBPageBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("Getting Started — PageBuilder", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:Install the rendering foundation and wire the body-first page pipeline.
+            }
+        }
+    }
+}
+
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+            @* ── Step 1 ── *@
+            @Html.TitleBuilder().SetTitle("1. Install the NuGet Package", TitleLevel.Two).AsSectionHeading().Render()
+            @using (Html.PB_P().Begin())
+            {
+                @:Start here when you want the PageBuilder document lifecycle before adopting BootstrapBuilder, EffectBuilder, ComponentBuilder or DocumentationViewer.
+            }
+            @(Html.CodeBlock("dotnet add package DMBPageBuilder", CodeLanguage.Bash)
+                .SetTitle("Install DMBPageBuilder")
+                .SetCopyButton())
+
+            @* ── Step 2 ── *@
+            @Html.TitleBuilder().SetTitle("2. Configure Services", TitleLevel.Two).AsSubSectionHeading().Render()
+            @using (Html.PB_P().Begin())
+            {
+                @:Load the common configuration before building the application service provider. This registers the page registry and document pipeline.
+            }
+            @(Html.CodeBlock(@"using DMBPageBuilder;
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+PageBuilderConfiguration.LoadCommonConfig(builder);
+
+builder.Services.AddControllersWithViews();", CodeLanguage.CSharp)
+                .SetTitle("Program.cs")
+                .SetCopyButton())
+
+            @* ── Step 3 ── *@
+            @Html.TitleBuilder().SetTitle("3. Add Razor Imports", TitleLevel.Two).AsSubSectionHeading().Render()
+            @using (Html.PB_P().Begin())
+            {
+                @:Add PageBuilder to
+                @using (Html.PB_Span().AsMonospace().Begin())
+                {
+                    @:_ViewImports.cshtml
+                }
+                @: so views and layouts can create builders and access page state.
+            }
+            @(Html.CodeBlock(@"@using DMBPageBuilder
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers", CodeLanguage.CSharp)
+                .SetTitle("_ViewImports.cshtml")
+                .SetCopyButton())
+
+            @* ── Step 4 ── *@
+            @Html.TitleBuilder().SetTitle("4. Apply the Layout Pattern", TitleLevel.Two).AsSubSectionHeading().Render()
+            @using (Html.PB_P().Begin())
+            {
+                @:The core pattern captures the body first so components can register page-level assets before the document head is emitted.
+            }
+            @(Html.CodeBlock(@"@{
+    var originalWriter = ViewContext.Writer;
+    var bodyWriter = new StringWriter();
+
+    try
+    {
+        ViewContext.Writer = bodyWriter;
+        RenderBody().WriteTo(ViewContext.Writer, HtmlEncoder);
+    }
+    finally
+    {
+        ViewContext.Writer = originalWriter;
+    }
+
+    var bodyHtml = bodyWriter.ToString();
+    PageInformation page = PageRegistry.GetPageInformation(Context) ?? new PageInformation();
+    PageBuilder builder = Html.PageBuilder(page);
+}
+
+@builder.RenderDocumentStart(Context)
+@Html.Raw(bodyHtml)
+@builder.RenderDocumentEnd(Context)", CodeLanguage.CSharp)
+                .SetTitle("_Layout.cshtml")
+                .SetCopyButton())
+
+            @* ── Key API callout ── *@
+            @using (Html.BlockBuilder().AsInfoCallout().Begin())
+            {
+                @using (Html.FlexBlockBuilder().Begin())
+                {
+                    @using (Html.BlockBuilder().AsCalloutIcon().Begin())
+                    {
+                        @using (Html.PB_Span().AddClass("bi bi-collection-fill fs-2 text-info").Begin()) { }
+                    }
+                    @using (Html.BlockBuilder().Begin())
+                    {
+                        @Html.TitleBuilder().SetTitle("Key API", TitleLevel.Five).AsAlertHeading().Render()
+                        @using (Html.BlockBuilder().AsSidebarRow().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospaceSmall().Begin())
+                            {
+                                @:PageBuilderConfiguration.LoadCommonConfig(...)
+                            }
+                        }
+                        @using (Html.BlockBuilder().AsSidebarRow().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospaceSmall().Begin())
+                            {
+                                @:PageRegistry.GetOrCreatePageInformation(...)
+                            }
+                        }
+                        @using (Html.BlockBuilder().AsSidebarRow().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospaceSmall().Begin())
+                            {
+                                @:Html.PageBuilder(page)
+                            }
+                        }
+                        @using (Html.BlockBuilder().AsSidebarRow().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospaceSmall().Begin())
+                            {
+                                @:builder.RenderDocumentStart(...)
+                            }
+                        }
+                        @using (Html.BlockBuilder().AsSidebarRow().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospaceSmall().Begin())
+                            {
+                                @:builder.RenderDocumentEnd(...)
+                            }
+                        }
+                    }
+                }
+            }
+
+            @* ── Next Step ── *@
+            @using (Html.BlockBuilder().AsSidebarNote().Begin())
+            {
+                @using (Html.BlockBuilder().AsTextCenter().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Understand how PageBuilder separates document orchestration from component rendering.", TitleLevel.Four).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:Check out the architecture guide to understand how PageBuilder manages resources and rendering.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "Architecture").SetTitle("Architecture").SetIcon(IconStruct.Bootstrap("bi-diagram-3")).SetVariant(VariantStyle.Primary)).Render()
+                }
+            }
+        }
+    }
+}

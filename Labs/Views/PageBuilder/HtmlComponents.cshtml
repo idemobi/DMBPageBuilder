@@ -1,0 +1,331 @@
+﻿@using DMBBootstrapBuilder
+@using DMBPageBuilder
+@using DMBComponentBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("HTML Components", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:HTML tags mapped to structured builders.
+            }
+        }
+    }
+}
+
+@* ── Content ── *@
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+
+            @Html.TitleBuilder().SetTitle("Overview", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder does not replace HTML. It provides a structured way to generate HTML using builders that encapsulate rendering logic, attributes, styles, and lifecycle.
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Each HTML element can be represented by a builder. This allows you to:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Generate HTML through a consistent API 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Compose elements safely 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Reuse rendering logic 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Participate in the PageBuilder rendering pipeline 
+                }
+            }
+
+            @* ── Core HTML mapping ── *@
+            @Html.TitleBuilder().SetTitle("Core HTML mapping", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:The following table shows common HTML elements and their PageBuilder equivalents.
+            }
+
+            @using (Html.TableBuilder().SetStriped().SetBordered().Begin())
+            {
+                @using (Html.TableHeaderBuilder().Begin())
+                {
+                    @using (Html.TableRowBuilder().Begin())
+                    {
+                        @using (Html.TableCellBuilder(true).Begin())
+                        {
+                            @:HTML Tag
+                        }
+                        @using (Html.TableCellBuilder(true).Begin())
+                        {
+                            @:PageBuilder Equivalent
+                        }
+                        @using (Html.TableCellBuilder(true).Begin())
+                        {
+                            @:Description
+                        }
+                    }
+                }
+                @using (Html.TableBodyBuilder().Begin())
+                {
+                    @using (Html.TableRowBuilder().Begin())
+                    {
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:&lt;div&gt;
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospace().Begin())
+                            {
+                                @:BlockBuilder
+                            }
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:Generic container element
+                        }
+                    }
+                    @using (Html.TableRowBuilder().Begin())
+                    {
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:&lt;span&gt;
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospace().Begin())
+                            {
+                                @:PB_Span
+                            }
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:Inline container
+                        }
+                    }
+                    @using (Html.TableRowBuilder().Begin())
+                    {
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:&lt;p&gt;
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospace().Begin())
+                            {
+                                @:PB_P
+                            }
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:Paragraph element
+                        }
+                    }
+                    @using (Html.TableRowBuilder().Begin())
+                    {
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:&lt;h1&gt; → &lt;h6&gt;
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospace().Begin())
+                            {
+                                @:TitleBuilder
+                            }
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:Structured title builder with level control
+                        }
+                    }
+                    @using (Html.TableRowBuilder().Begin())
+                    {
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:&lt;img&gt;
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospace().Begin())
+                            {
+                                @:ImageBuilder
+                            }
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:Image rendering with additional behaviors
+                        }
+                    }
+                    @using (Html.TableRowBuilder().Begin())
+                    {
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:&lt;a&gt;
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospace().Begin())
+                            {
+                                @:LinkBuilder
+                            }
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:Link generation with routing support
+                        }
+                    }
+                    @using (Html.TableRowBuilder().Begin())
+                    {
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:&lt;button&gt;
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospace().Begin())
+                            {
+                                @:ButtonBuilder
+                            }
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:Button with variant and behavior support
+                        }
+                    }
+                    @using (Html.TableRowBuilder().Begin())
+                    {
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:&lt;ul&gt; / &lt;ol&gt;
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospace().Begin())
+                            {
+                                @:ListBuilder
+                            }
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:List structures
+                        }
+                    }
+                    @using (Html.TableRowBuilder().Begin())
+                    {
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:&lt;table&gt;
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @using (Html.PB_Span().AsMonospace().Begin())
+                            {
+                                @:TableBuilder
+                            }
+                        }
+                        @using (Html.TableCellBuilder().Begin())
+                        {
+                            @:Structured table rendering
+                        }
+                    }
+                }
+            }
+
+            @* ── Important notes ── *@
+            @Html.TitleBuilder().SetTitle("Important notes", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Not every HTML tag has a dedicated builder. Generic builders can be used when needed. 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Some builders represent multiple HTML tags depending on configuration (e.g.
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:TitleBuilder 
+                }
+                    @:).
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Higher-level builders (BootstrapBuilder) extend this mapping with richer components. 
+                }
+            }
+
+            @* ── Generic builder usage ── *@
+            @Html.TitleBuilder().SetTitle("Generic builder usage", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:When no specific builder exists, you can still generate any HTML tag using a generic builder. This ensures that PageBuilder remains complete and does not limit HTML expressiveness.
+            }
+
+            @* ── Why this mapping matters ── *@
+            @Html.TitleBuilder().SetTitle("Why this mapping matters", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:The goal of PageBuilder is not to hide HTML, but to make it explicit and structured. By mapping HTML elements to builders, the framework ensures that rendering remains predictable, composable, and aligned with the page pipeline.
+            }
+
+            @* ── Next Steps ── *@
+            @using (Html.BlockBuilder().AsSidebarNote().Begin())
+            {
+                @using (Html.BlockBuilder().AsTextCenter().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Explore the architecture", TitleLevel.Four).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:Understand how builders generate HTML internally and how the rendering lifecycle works.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "HtmlBuilderBase").SetTitle("HtmlBuilderBase →").SetIcon(IconStruct.Bootstrap("bi-arrow-right")).SetVariant(VariantStyle.Primary)).Render()
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "BuilderLifecycle").SetTitle("Builder Lifecycle →").SetIcon(IconStruct.Bootstrap("bi-arrow-right")).SetVariant(VariantStyle.Secondary)).Render()
+                }
+            }
+
+        }
+    }
+}

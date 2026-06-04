@@ -1,0 +1,163 @@
+﻿@using DMBBootstrapBuilder
+@using DMBPageBuilder
+@using DMBComponentBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("Examples", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:See the rendering model in practical situations.
+            }
+        }
+    }
+}
+
+@* ── Content ── *@
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+
+            @Html.TitleBuilder().SetTitle("Overview", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Examples are useful only if they reflect the real rendering model of the framework. In PageBuilder, this means showing both visible HTML generation and the way components can contribute to the final document through the shared page model.
+            }
+
+            @* ── Example 1 ── *@
+            @Html.TitleBuilder().SetTitle("Example 1 — Layout using body capture", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:This is the core PageBuilder layout pattern. The body is rendered first into a temporary writer, allowing components to register page-level dependencies while rendering.
+            }
+
+            @(Html.CodeBlock(@"@using DMBPageBuilder
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    var originalWriter = ViewContext.Writer;
+    var bodyWriter = new StringWriter();
+
+    try
+    {
+        ViewContext.Writer = bodyWriter;
+        RenderBody().WriteTo(ViewContext.Writer, HtmlEncoder);
+    }
+    finally
+    {
+        ViewContext.Writer = originalWriter;
+    }
+
+    var bodyHtml = bodyWriter.ToString();
+    PageInformation page = PageRegistry.GetPageInformation(Context) ?? new PageInformation();
+    PageBuilder builder = Html.PageBuilder(page);
+}
+
+@builder.RenderDocumentStart()
+@Html.Raw(bodyHtml)
+@builder.RenderDocumentEnd()", CodeLanguage.CSharp)
+                .SetTitle("Body capture layout")
+                .SetCopyButton())
+
+            @* ── Example 2 ── *@
+            @Html.TitleBuilder().SetTitle("Example 2 — A body component registering a script", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:A component rendered in the body may require a script file. During rendering, it can register that dependency into
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageInformation 
+                }
+                @:. The final document head or end-of-body section can then include it correctly. This is one of the reasons the body-first capture model exists.
+            }
+
+            @* ── Example 3 ── *@
+            @Html.TitleBuilder().SetTitle("Example 3 — Reusable builder rendered in Razor", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:A builder can encapsulate repeated rendering logic while still participating in the shared page model and lifecycle. Razor remains the composition layer, while the builder captures the reusable rendering behavior.
+            }
+
+            @* ── Example 4 ── *@
+            @Html.TitleBuilder().SetTitle("Example 4 — Builder-based rendering in C#", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder can be used directly from C# classes to generate structured HTML outside of Razor templates. This is especially useful for framework-level rendering, reusable infrastructure, and documentation generation.
+            }
+
+            @* ── What examples should demonstrate ── *@
+            @Html.TitleBuilder().SetTitle("What examples should demonstrate", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:The document pipeline 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:The body capture model 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:The shared page model through
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageInformation 
+                }
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Reusable builder-based HTML generation 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Separation between page orchestration and component rendering 
+                }
+            }
+
+            @* ── Next Steps ── *@
+            @using (Html.BlockBuilder().AsSidebarNote().Begin())
+            {
+                @using (Html.BlockBuilder().AsTextCenter().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Explore further", TitleLevel.Four).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:Go back to the Razor integration details, or explore the C# rendering model.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "CSHtml").SetTitle("Using in Razor →").SetIcon(IconStruct.Bootstrap("bi-arrow-right")).SetVariant(VariantStyle.Primary)).Render()
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "CSharp").SetTitle("Using in C# →").SetIcon(IconStruct.Bootstrap("bi-arrow-right")).SetVariant(VariantStyle.Secondary)).Render()
+                }
+            }
+
+        }
+    }
+}

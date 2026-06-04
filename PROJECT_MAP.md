@@ -7,12 +7,12 @@ When copying this file to another PageBuilder ecosystem project, update this sec
 - Project name: `DMBPageBuilder`
 - Project root folder: `DMBPageBuilder`
 - Main role: foundational page rendering package.
-- Important folders: `New_PageInformation/`, `Components/`, `HtmlHelpers/`, `Controllers/`, `Registers/`, `WebAssets/`, `Facades/`, `Models/`, `Tools/`, `Resources/`, and `wwwroot/`.
+- Important folders: `Source/Components/`, `Source/HtmlHelpers/`, `Source/Controllers/`, `Source/Registers/`, `Source/WebAssets/`, `Source/Facades/`, `Source/Models/`, `Source/Tools/`, `Source/Resources/`, `Source/wwwroot/`, `UnitTests/`, and `Labs/`.
 - Documentation target: `labs_idemobi_com`
 
 ## Folder responsibilities
 
-- `Components/`
+- `Source/Components/`
   - Fluent HTML component builders and shared rendering infrastructure.
   - `Bases/`: abstract builder foundations such as `HtmlBuilderBase<TBuilder>`, `HtmlTagBuilder<TBuilder>`, constrained builders, and void-tag builders.
   - `HtmlTagBuilder/`: builders for standard non-void HTML elements such as anchors, sections, forms, scripts, media, and text elements.
@@ -21,39 +21,42 @@ When copying this file to another PageBuilder ecosystem project, update this sec
   - `Comment/`: HTML comment builder support.
   - Custom class composition helpers used by builders that expose class customization.
 
-- `Configuration/`
+- `Source/Configuration/`
   - PageBuilder configuration and static-file post-configuration for embedded package assets.
 
-- `Controllers/`
+- `Source/Controllers/`
   - MVC base controller support for preparing `PageInformation` before a request renders.
 
-- `Facades/`
+- `Source/Facades/`
   - Public contracts used by PageBuilder components, action items, style/class composition, and rendering integrations.
 
-- `HtmlHelpers/`
+- `Source/HtmlHelpers/`
   - Razor extension methods that expose PageBuilder components and utility output to `.cshtml` files.
 
-- `Models/`
-  - Shared enums and value objects used by rendering, icons, HTML versions, variants, JavaScript tags, link tags, and render context tracking.
+- `Source/Models/`
+  - Shared enums, value objects, page model, and page rendering pipeline.
+  - Includes rendering, icons, HTML versions, variants, JavaScript tags, link tags, render context tracking, `PageInformation`, `PageBuilder`, metadata definitions, script/style definitions, favicon definitions, body rendering contracts, alert helpers, schema.org integration, and page-level Razor helpers.
 
-- `New_PageInformation/`
-  - Page model and page rendering pipeline.
-  - Includes `PageInformation`, `PageBuilder`, metadata definitions, script/style definitions, favicon definitions, body rendering contracts, alert helpers, schema.org integration, and page-level Razor helpers.
-
-- `Registers/`
+- `Source/Registers/`
   - Request-scoped registration and lookup for `PageInformation`.
 
-- `Resources/`
+- `Source/Resources/`
   - Internal and data-annotation localization `.resx` assets for `DMBPageBuilder`.
 
-- `Tools/`
+- `Source/Tools/`
   - Utility helpers for HTML identifiers, rendering context, and region-related behavior.
 
-- `WebAssets/`
+- `Source/WebAssets/`
   - Global web asset registry for scripts and stylesheets shared across rendered pages.
 
-- `wwwroot/`
+- `Source/wwwroot/`
   - Embedded static assets (`css`, `js`) served through package static-file configuration.
+
+- `UnitTests/`
+  - Unit test project and test cases for `DMBPageBuilder`.
+
+- `Labs/`
+  - Razor labs project, controllers, views, and local view helpers used by `labs_idemobi_com` to display DMBPageBuilder presentation pages and examples.
 
 - `.ai/` and `.aiassistant/`
   - Local AI-assistant support metadata when present. Do not treat generated assistant state as project source.
@@ -63,7 +66,7 @@ When copying this file to another PageBuilder ecosystem project, update this sec
 
 ## Documentation-related files
 
-- `README.md`: package overview and usage context.
+- `Source/README.md`: package overview and usage context.
 - `AGENTS.md`: local AI rules and scope for this package.
 - `AI_CONTEXT.md`: additional context for AI-assisted maintenance.
 - `DOCUMENTATION_RULES.md`: strict documentation policy.

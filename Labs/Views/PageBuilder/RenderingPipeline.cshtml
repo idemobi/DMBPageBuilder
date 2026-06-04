@@ -1,0 +1,170 @@
+﻿@using DMBBootstrapBuilder
+@using DMBComponentBuilder
+@using DMBEffectBuilder
+@using DMBPageBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("Rendering Pipeline — PageBuilder", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:Capture the body first, then render the final document from the completed page model.
+            }
+        }
+    }
+}
+
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+            @* ── Step 1 ── *@
+            @using (Html.BlockBuilder().AsTimelineStep().Begin())
+            {
+                @using (Html.BlockBuilder().AsTimelineStepBadge().Begin())
+                {
+                    @:1
+                }
+                @Html.TitleBuilder().SetTitle("Capture Body", TitleLevel.Three).AsH4().Render()
+                @using (Html.PB_P().Begin())
+                {
+                    @:The layout renders
+                    @using (Html.PB_Span().AsMonospace().Begin())
+                    {
+                        @:RenderBody()
+                    }
+                    @: into a temporary
+                    @using (Html.PB_Span().AsMonospace().Begin())
+                    {
+                        @:StringWriter
+                    }
+                    @: instead of sending it directly to the response. Components rendered during body capture can register scripts, stylesheets and metadata.
+                }
+                @(Html.CodeBlock(@"var originalWriter = ViewContext.Writer;
+var bodyWriter = new StringWriter();
+
+try
+{
+    ViewContext.Writer = bodyWriter;
+    RenderBody().WriteTo(ViewContext.Writer, HtmlEncoder);
+}
+finally
+{
+    ViewContext.Writer = originalWriter;
+}", CodeLanguage.CSharp))
+            }
+
+            @* ── Step 2 ── *@
+            @using (Html.BlockBuilder().AsTimelineStep().Begin())
+            {
+                @using (Html.BlockBuilder().AsTimelineStepBadge().Begin())
+                {
+                    @:2
+                }
+                @Html.TitleBuilder().SetTitle("Enrich Page Model", TitleLevel.Three).AsH4().Render()
+                @using (Html.PB_P().Begin())
+                {
+                    @:Builders rendered during body capture register scripts, links, inline styles or metadata into
+                    @using (Html.PB_Span().AsMonospace().Begin())
+                    {
+                        @:PageInformation
+                    }
+                    @:. This is the key advantage of the body-first pipeline — assets are component-driven.
+                }
+                @(Html.CodeBlock(@"// Inside any component or effect builder
+PageInformation page = PageRegistry.GetOrCreatePageInformation(httpContext);
+page.SetStylesheet(""/css/imageEffect/BlurToSharpEffect.css"");
+page.SetScriptFile(""/js/myComponent.js"");", CodeLanguage.CSharp))
+            }
+
+            @* ── Step 3 ── *@
+            @using (Html.BlockBuilder().AsTimelineStep().Begin())
+            {
+                @using (Html.BlockBuilder().AsTimelineStepBadge().Begin())
+                {
+                    @:3
+                }
+                @Html.TitleBuilder().SetTitle("Render Document Start", TitleLevel.Three).AsH4().Render()
+                @using (Html.PB_P().Begin())
+                {
+                    @:Once the body is fully captured, the layout retrieves the completed
+                    @using (Html.PB_Span().AsMonospace().Begin())
+                    {
+                        @:PageInformation
+                    }
+                    @: and emits the doctype, opening tags and the complete head — including all registered assets.
+                }
+                @(Html.CodeBlock(@"var bodyHtml = bodyWriter.ToString();
+PageInformation page = PageRegistry.GetPageInformation(Context) ?? new PageInformation();
+PageBuilder builder = Html.PageBuilder(page);
+
+@builder.RenderDocumentStart(Context)", CodeLanguage.CSharp))
+            }
+
+            @* ── Step 4 (final) ── *@
+            @using (Html.BlockBuilder().AsTimelineStep().Begin())
+            {
+                @using (Html.BlockBuilder().AsTimelineStepBadge("bg-success").Begin())
+                {
+                    @using (Html.PB_Span().AddClass("bi bi-check").Begin()) { }
+                }
+                @Html.TitleBuilder().SetTitle("Inject Body &amp; Finish", TitleLevel.Three).AsH4().Render()
+                @using (Html.PB_P().Begin())
+                {
+                    @:The captured body HTML is injected into the final document body.
+                    @using (Html.PB_Span().AsMonospace().Begin())
+                    {
+                        @:RenderDocumentEnd
+                    }
+                    @: emits end-of-body assets (scripts) and closing document tags, completing the full page.
+                }
+                @(Html.CodeBlock(@"@Html.Raw(bodyHtml)
+@builder.RenderDocumentEnd(Context)", CodeLanguage.CSharp))
+            }
+
+            @* ── Performance highlight ── *@
+            @using (Html.BlockBuilder().AsInfoCallout().Begin())
+            {
+                @using (Html.FlexBlockBuilder().Begin())
+                {
+                    @using (Html.BlockBuilder().AsCalloutIcon().Begin())
+                    {
+                        @using (Html.PB_Span().AddClass("bi bi-lightning-charge-fill fs-2 text-warning").Begin()) { }
+                    }
+                    @using (Html.BlockBuilder().Begin())
+                    {
+                        @Html.TitleBuilder().SetTitle("Body-First Advantage", TitleLevel.Five).AsAlertHeading().Render()
+                        @using (Html.PB_P().AsNoMargin().Begin())
+                        {
+                            @:Components register their own CSS and JS during body rendering — the document head always contains exactly what the page needs, nothing more.
+                        }
+                    }
+                }
+            }
+
+            @* ── Next Step ── *@
+            @using (Html.BlockBuilder().AsSidebarNote().Begin())
+            {
+                @using (Html.BlockBuilder().AsTextCenter().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Explore Further", TitleLevel.Four).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:Go back to the introduction for a complete overview of PageBuilder capabilities.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "Introduction").SetTitle("Introduction").SetIcon(IconStruct.Bootstrap("bi-house")).SetVariant(VariantStyle.Primary)).Render()
+                }
+            }
+        }
+    }
+}

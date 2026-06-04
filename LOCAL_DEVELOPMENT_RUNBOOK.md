@@ -9,7 +9,7 @@ Guide local development for `DMBPageBuilder` changes.
 When copying this file to another PageBuilder ecosystem project, update this section first.
 
 - Project name: `DMBPageBuilder`
-- Main code areas: `New_PageInformation/`, `Components/`, `HtmlHelpers/`, `Controllers/`, `Registers/`, `WebAssets/`, `Facades/`, `Models/`, and `Tools/`.
+- Main code areas: `Source/Components/`, `Source/HtmlHelpers/`, `Source/Controllers/`, `Source/Registers/`, `Source/WebAssets/`, `Source/Facades/`, `Source/Models/`, and `Source/Tools/`.
 - Main risk areas: rendered HTML output, metadata ordering, asset registration, Razor helper contracts, and fluent builder behavior.
 - Documentation target: `labs_idemobi_com`
 
@@ -23,7 +23,7 @@ When copying this file to another PageBuilder ecosystem project, update this sec
 
 ## Common checks
 
-- Resource key consistency in `Resources/*.resx`.
+- Resource key consistency in `Source/Resources/*.resx`.
 - Namespace and public contract consistency.
 - Null/argument validation behavior.
 - Rendered HTML, metadata, and asset ordering expectations.

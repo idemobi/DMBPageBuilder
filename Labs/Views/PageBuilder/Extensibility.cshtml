@@ -1,0 +1,230 @@
+﻿@using DMBBootstrapBuilder
+@using DMBPageBuilder
+@using DMBComponentBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("Extensibility", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:Use PageBuilder as a foundation, not just as a library.
+            }
+        }
+    }
+}
+
+@* ── Content ── *@
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+
+            @Html.TitleBuilder().SetTitle("Overview", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder is designed to be extended. It is not only a set of ready-to-use helpers. It is a rendering foundation intended to support custom builders, custom rendering systems, custom body layouts, and higher-level component libraries.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:This extensibility is one of the main reasons the framework separates page orchestration, builder infrastructure, and composition logic so carefully.
+            }
+
+            @* ── Why extensibility matters ── *@
+            @Html.TitleBuilder().SetTitle("Why extensibility matters", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:A rendering framework becomes far more valuable when it can grow with the application instead of forcing the application into rigid predefined patterns. PageBuilder was built to support that kind of growth. In practice, this means you should be able to:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Create your own builders 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Create your own CSS composers 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Create your own body builders 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Build higher-level rendering modules on top of the existing system 
+                }
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:BootstrapBuilder is one example of this philosophy in action.
+            }
+
+            @* ── Main extension points ── *@
+            @Html.TitleBuilder().SetTitle("Main extension points", TitleLevel.Two).AsSectionHeading().Render()
+
+            @* Custom builders *@
+            @Html.TitleBuilder().SetTitle("Custom builders", TitleLevel.Three).AsSubSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:The most direct extension point is the creation of custom builders. A custom builder can derive from
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:HtmlBuilderBase&lt;TBuilder&gt; 
+                }
+                @: or from one of the more specialized builder base classes in your framework. This allows you to create reusable rendering primitives while still inheriting the core systems for attributes, styles, classes, internal state, cloning, and rendering.
+            }
+
+            @* Custom CSS composers *@
+            @Html.TitleBuilder().SetTitle("Custom CSS composers", TitleLevel.Three).AsSubSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:If a styling rule is reusable across builders or across a family of components, it can be extracted into a custom CSS composer. This allows styling logic to evolve independently from the structural rendering logic of a builder.
+            }
+
+            @* Custom body builders *@
+            @Html.TitleBuilder().SetTitle("Custom body builders", TitleLevel.Three).AsSubSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:At the page-structure level, you can extend the framework by creating your own
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:IBodyBuilder 
+                }
+                @: implementation. This allows you to define an application-level body shell while still participating in the same document pipeline.
+            }
+
+            @* Higher-level modules *@
+            @Html.TitleBuilder().SetTitle("Higher-level modules", TitleLevel.Three).AsSubSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder is specifically designed to support higher-level rendering modules. A module built on top of PageBuilder can introduce its own components, conventions, action systems, styling vocabulary, and rendering patterns while still relying on the same base pipeline. This is what turns PageBuilder into a platform rather than a simple rendering helper library.
+            }
+
+            @* ── Extensibility and the shared page model ── *@
+            @Html.TitleBuilder().SetTitle("Extensibility and the shared page model", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Extensions do not exist outside the page pipeline. A custom builder or a higher-level module can still contribute to the shared
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageInformation 
+                }
+                @: while rendering. This is important because extensibility in PageBuilder is not only about generating HTML — it is also about participating correctly in the document model used by the rendering pipeline.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:An extension should be able to generate its output and declare its page-level dependencies in a way that remains consistent with the rest of the framework.
+            }
+
+            @* ── Design principle ── *@
+            @Html.TitleBuilder().SetTitle("Design principle: extend through the model, not around it", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsInfoCallout().Begin())
+            {
+                @using (Html.FlexBlockBuilder().Begin())
+                {
+                    @using (Html.BlockBuilder().AsCalloutIcon().Begin())
+                    {
+                        @using (Html.PB_Span().AddClass("bi bi-lightbulb-fill fs-2 text-info").Begin()) { }
+                    }
+                    @using (Html.BlockBuilder().Begin())
+                    {
+                        @Html.TitleBuilder().SetTitle("The safest way to extend", TitleLevel.Five).AsAlertHeading().Render()
+                        @using (Html.PB_P().AsNoMargin().Begin())
+                        {
+                            @:Build on top of the architecture rather than bypassing it. Respect the rendering contract, use the existing attribute and style systems, participate in the shared page model, and preserve builder lifecycle consistency. Extensions built this way remain coherent with the framework and with each other.
+                        }
+                    }
+                }
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Shortcuts often seem convenient when creating new components or rendering features. Over time, however, they usually create inconsistency. Some components follow the framework model, others bypass it, and the overall rendering system becomes harder to understand.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder extensibility works best when custom code follows the same architectural discipline as the core framework. This is what allows an ecosystem to remain understandable as it grows.
+            }
+
+            @* ── Recommended usage ── *@
+            @Html.TitleBuilder().SetTitle("Recommended usage", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Create custom builders when rendering logic becomes reusable or structural 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Create CSS composers when styling rules become reusable across components 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Create custom body builders for application-level page shells 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Let extensions participate in the shared page model when needed 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Extend through the framework model instead of bypassing it 
+                }
+            }
+
+            @* ── Next Steps ── *@
+            @using (Html.BlockBuilder().AsSidebarNote().Begin())
+            {
+                @using (Html.BlockBuilder().AsTextCenter().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Continue with Diagnostics", TitleLevel.Four).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:Learn how to inspect, debug, and validate rendering behavior in PageBuilder.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "Diagnostics").SetTitle("Diagnostics →").SetIcon(IconStruct.Bootstrap("bi-arrow-right")).SetVariant(VariantStyle.Primary)).Render()
+                }
+            }
+
+        }
+    }
+}

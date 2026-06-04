@@ -1,0 +1,89 @@
+#region Copyright
+
+// ©2002-2026 idéMobi
+// www.idemobi.com
+
+#endregion
+
+#region
+
+using System.IO;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+#endregion
+
+namespace DMBPageBuilder
+{
+    /// <summary>
+    ///     Builds an HTML <c>a</c> element for PageBuilder Razor output.
+    /// </summary>
+    public sealed class PB_AnchorBuilder : HtmlTagBuilder<PB_AnchorBuilder>
+    {
+        #region Instance constructors and destructors
+
+        /// <summary>
+        ///     Initializes a new <see cref="PB_AnchorBuilder" /> instance.
+        /// </summary>
+        /// <param name="writer">The output writer used by the builder.</param>
+        /// <param name="html">The Razor HTML helper that owns the rendering context.</param>
+        public PB_AnchorBuilder(TextWriter writer, IHtmlHelper html)
+            : base(writer, html)
+        {
+            _tag = "a";
+        }
+
+        #endregion
+
+        #region Instance methods
+
+        /// <inheritdoc />
+        protected override PB_AnchorBuilder CreateInstance()
+        {
+            return new PB_AnchorBuilder(_textWriter, _htmlHelper);
+        }
+
+        /// <summary>
+        ///     Sets the HTML <c>download</c> attribute.
+        /// </summary>
+        /// <param name="value">The value to assign to the HTML <c>value</c> attribute.</param>
+        /// <returns>The current <see cref="PB_AnchorBuilder" /> instance for chaining.</returns>
+        public PB_AnchorBuilder SetDownload(string? value = "")
+        {
+            return value is null
+                ? SetAttribute("download", string.Empty)
+                : SetAttribute("download", value);
+        }
+
+        /// <summary>
+        ///     Sets the HTML <c>href</c> attribute.
+        /// </summary>
+        /// <param name="href">The value to assign to the HTML <c>href</c> attribute.</param>
+        /// <returns>The current <see cref="PB_AnchorBuilder" /> instance for chaining.</returns>
+        public PB_AnchorBuilder SetHref(string href)
+        {
+            return SetAttribute("href", href);
+        }
+
+        /// <summary>
+        ///     Sets the HTML <c>rel</c> attribute.
+        /// </summary>
+        /// <param name="rel">The value to assign to the HTML <c>rel</c> attribute.</param>
+        /// <returns>The current <see cref="PB_AnchorBuilder" /> instance for chaining.</returns>
+        public PB_AnchorBuilder SetRel(string rel)
+        {
+            return SetAttribute("rel", rel);
+        }
+
+        /// <summary>
+        ///     Sets the HTML <c>target</c> attribute.
+        /// </summary>
+        /// <param name="target">The value to assign to the HTML <c>target</c> attribute.</param>
+        /// <returns>The current <see cref="PB_AnchorBuilder" /> instance for chaining.</returns>
+        public PB_AnchorBuilder SetTarget(string target)
+        {
+            return SetAttribute("target", target);
+        }
+
+        #endregion
+    }
+}

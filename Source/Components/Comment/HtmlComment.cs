@@ -1,0 +1,47 @@
+#region Copyright
+
+// ©2002-2026 idéMobi
+// www.idemobi.com
+
+#endregion
+
+#region
+
+using System.IO;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+#endregion
+
+namespace DMBPageBuilder
+{
+    /// <summary>
+    ///     Renders an HTML comment in PageBuilder output.
+    /// </summary>
+    public sealed class HtmlComment : HtmlCommentBuilder<HtmlComment>
+    {
+        #region Instance constructors and destructors
+
+        /// <summary>
+        ///     Initializes a new <see cref="HtmlComment" /> instance.
+        /// </summary>
+        /// <param name="writer">The output writer used by the builder.</param>
+        /// <param name="html">The Razor HTML helper that owns the rendering context.</param>
+        /// <param name="comment">The comment text to render.</param>
+        public HtmlComment(TextWriter writer, IHtmlHelper html, string comment = "comment")
+            : base(writer, html, comment)
+        {
+        }
+
+        #endregion
+
+        #region Instance methods
+
+        /// <inheritdoc />
+        protected override HtmlComment CreateInstance()
+        {
+            return new HtmlComment(_textWriter, _htmlHelper, GetInternal<string?>("_comment", "comment") ?? "comment");
+        }
+
+        #endregion
+    }
+}

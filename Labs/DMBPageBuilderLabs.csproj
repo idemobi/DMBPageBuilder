@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+    <PropertyGroup>
+        <RootNamespace>DMBPageBuilderLabs</RootNamespace>
+        <AssemblyName>DMBPageBuilderLabs</AssemblyName>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <IsPackable>false</IsPackable>
+        <EnableDefaultRazorGenerateItems>true</EnableDefaultRazorGenerateItems>
+        <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Source\DMBPageBuilder.csproj" />
+        <ProjectReference Include="..\..\DMBBootstrapBuilder\Source\DMBBootstrapBuilder.csproj" />
+        <ProjectReference Include="..\..\DMBComponentBuilder\Source\DMBComponentBuilder.csproj" />
+        <ProjectReference Include="..\..\DMBEffectBuilder\Source\DMBEffectBuilder.csproj" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,413 @@
+﻿@using DMBBootstrapBuilder
+@using DMBPageBuilder
+@using DMBComponentBuilder
+@{
+    Layout = "_Layout";
+}
+
+@* ── Hero ── *@
+@using (Html.SectionBuilder().SetHeight(125, UnitSize.px).Begin())
+{
+    @using (Html.FlexBlockBuilder().SetAlignItemsCenter().SetJustifyContentCenter().Begin())
+    {
+        @using (Html.BlockBuilder().AsTextCenter().Begin())
+        {
+            @Html.TitleBuilder().SetTitle("Builder Lifecycle", TitleLevel.One).Render()
+            @using (Html.PB_P().AsLead().Begin())
+            {
+                @:Understand when a builder starts, writes, and completes its output.
+            }
+        }
+    }
+}
+
+@* ── Content ── *@
+@using (Html.ContainerBuilder().SetPadding(SpacingSide.Y, SpacingSize.Five).Begin())
+{
+    @using (Html.RowBuilder().Begin())
+    {
+        @using (Html.ColBuilder().SetCol(ColSize.Col12).Begin())
+        {
+
+            @Html.TitleBuilder().SetTitle("Overview", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:The builder lifecycle is one of the central concepts of PageBuilder. A builder is not just a passive wrapper around HTML. It participates in a rendering process with a defined beginning, an output phase, and a completion phase.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:This lifecycle is what makes builders reusable, composable, and predictable inside the PageBuilder rendering pipeline.
+            }
+
+            @* ── Lifecycle diagram ── *@
+            @Html.TitleBuilder().SetTitle("Lifecycle diagram", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:The diagram shows the two rendering styles that PageBuilder builders commonly use: scoped rendering with
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Begin() 
+                }
+                @: and
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Dispose() 
+                }
+                @:, and page model enrichment during rendering.
+            }
+
+            @(Html.ImageRender("/drawio/PageBuilder/builder-lifecycle.drawio.svg")
+                .Alt("PageBuilder builder lifecycle diagram")
+                .InlineSvg()
+                .SetWidth(100, UnitSize.percent)
+                .SetBorder()
+                .SetRounded()
+                .Render())
+
+            @* ── Why lifecycle matters ── *@
+            @Html.TitleBuilder().SetTitle("Why lifecycle matters", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Without a clear lifecycle, a rendering system quickly becomes difficult to reason about. Components start writing output at arbitrary times, nested rendering becomes fragile, and debugging rendering order becomes harder.
+            }
+            @using (Html.PB_P().Begin())
+            {
+                @:PageBuilder avoids this by giving builders a disciplined rendering model. This model allows a builder to behave consistently whether it is used in Razor, in C#, or inside a larger builder composition.
+            }
+
+            @* ── Core rendering contract ── *@
+            @Html.TitleBuilder().SetTitle("The core rendering contract", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:At the lowest level, builders render themselves through
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:WriteTo(...) 
+                }
+                @:. This is the base output contract used by the framework.
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:WriteTo(...) 
+                }
+                @: is responsible for:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Applying the rendering flow consistently 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Triggering debug metadata when enabled 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Delegating the actual HTML generation to
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:WriteToCore(...) 
+                }
+                }
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:This means builders do not generally write their output by directly assembling arbitrary strings from outside the lifecycle. They render themselves through the framework contract.
+            }
+
+            @* ── Begin and Dispose ── *@
+            @Html.TitleBuilder().SetTitle("Begin and Dispose", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Some builders represent a structural region rather than a single atomic element. In those cases, the most natural rendering pattern is a scoped lifecycle based on
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Begin() 
+                }
+                @: and
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Dispose() 
+                }
+                @:. This pattern is used when a builder needs to:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Write an opening structure first 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Allow nested content to be rendered in between 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Write a closing structure when the scope ends 
+                }
+            }
+
+            @using (Html.BlockBuilder().AsInfoCallout().Begin())
+            {
+                @using (Html.FlexBlockBuilder().Begin())
+                {
+                    @using (Html.BlockBuilder().AsCalloutIcon().Begin())
+                    {
+                        @using (Html.PB_Span().AddClass("bi bi-lightbulb-fill fs-2 text-info").Begin()) { }
+                    }
+                    @using (Html.BlockBuilder().Begin())
+                    {
+                        @Html.TitleBuilder().SetTitle("Using blocks", TitleLevel.Five).AsAlertHeading().Render()
+                        @using (Html.PB_P().AsNoMargin().Begin())
+                        {
+                            @:This makes builders fit naturally inside
+                            @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:using 
+                }
+                            @: blocks.
+                            @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Begin() 
+                }
+                            @: writes the opening structure, nested content is rendered, then
+                            @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Dispose() 
+                }
+                            @: writes the closing structure. This is especially useful for container-like builders and region builders.
+                        }
+                    }
+                }
+            }
+
+            @* ── Render and WriteTo ── *@
+            @Html.TitleBuilder().SetTitle("Render and WriteTo", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:Not every builder needs a scoped lifecycle. Some builders are atomic and can render themselves in a single step. In those cases,
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Render() 
+                }
+                @: or
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:WriteTo(...) 
+                }
+                @: is often sufficient.
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:WriteTo(...) 
+                }
+                    @: is the low-level output contract
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Render() 
+                }
+                    @: is often a convenience method
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Begin() 
+                }
+                    @: and
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Dispose() 
+                }
+                    @: are used when a builder defines a rendering scope
+                }
+            }
+
+            @* ── Lifecycle and nesting ── *@
+            @Html.TitleBuilder().SetTitle("Lifecycle and nesting", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:The builder lifecycle is especially important when builders are nested. A parent builder may open a region, a child builder may render inside it, and both must still produce correct and predictable output. A consistent lifecycle ensures that:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Opening and closing tags are emitted in the right order 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Nested rendering stays structurally valid 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Page-level registration can still happen during rendering 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Components remain understandable even when composition becomes deeper 
+                }
+            }
+
+            @* ── Lifecycle and PageInformation ── *@
+            @Html.TitleBuilder().SetTitle("Lifecycle and PageInformation", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.PB_P().Begin())
+            {
+                @:A builder does not only generate visible HTML. During its lifecycle, it may also enrich the shared
+                @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:PageInformation 
+                }
+                @: instance used by the rendering pipeline. For example, a builder may register:
+            }
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:A script dependency 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:A stylesheet 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Inline JavaScript 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Inline CSS 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Other page-level state 
+                }
+            }
+
+            @using (Html.PB_P().Begin())
+            {
+                @:This means the lifecycle of a builder is not limited to writing markup. It can also contribute to the final document model while it renders.
+            }
+
+            @* ── Recommended usage ── *@
+            @Html.TitleBuilder().SetTitle("Recommended usage", TitleLevel.Two).AsSectionHeading().Render()
+
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Use
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Begin() 
+                }
+                    @: and
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Dispose() 
+                }
+                    @: for structural builders
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Use
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:WriteTo(...) 
+                }
+                    @: as the rendering contract
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin())
+                {
+                    @:Use
+                    @using (Html.PB_Span().AsMonospace().Begin()) {
+                    @:Render() 
+                }
+                    @: as a convenience, not as a replacement for the lifecycle model
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Keep builders aligned with the shared page model when they need to register dependencies 
+                }
+            }
+            @using (Html.BlockBuilder().AsBenefitRow().Begin())
+            {
+                @using (Html.PB_Span().AddClass("bi bi-check-circle-fill text-success me-3 mt-1").Begin()) { }
+                @using (Html.BlockBuilder().Begin()) {
+                    @:Avoid hidden or unpredictable rendering side effects 
+                }
+            }
+
+            @* ── Next Steps ── *@
+            @using (Html.BlockBuilder().AsSidebarNote().Begin())
+            {
+                @using (Html.BlockBuilder().AsTextCenter().Begin())
+                {
+                    @Html.TitleBuilder().SetTitle("Continue with BodyBuilder", TitleLevel.Four).Render()
+                    @using (Html.PB_P().AsSmallMuted().Begin())
+                    {
+                        @:Learn how BodyBuilder controls the body shell within the pipeline.
+                    }
+                    @Html.Button(ActionItemFactory.AspRoute("PageBuilder", "BodyBuilder").SetTitle("Layout & BodyBuilder →").SetIcon(IconStruct.Bootstrap("bi-arrow-right")).SetVariant(VariantStyle.Primary)).Render()
+                }
+            }
+
+        }
+    }
+}
