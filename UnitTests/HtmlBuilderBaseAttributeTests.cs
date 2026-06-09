@@ -7,8 +7,6 @@
 
 #region
 
-using System;
-using System.IO;
 using DMBPageBuilder;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NUnit.Framework;
@@ -20,42 +18,46 @@ namespace DMBPageBuilderUnitTest;
 [TestFixture]
 public sealed class HtmlBuilderBaseAttributeTests
 {
-    [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.CommonAttributeNames))]
-    public void SetAttributeAcceptsCommonHtmlAttributeNames(string attributeName, string expectedAttribute)
+    private static PB_SpanBuilder CreateBuilder()
     {
-        PB_SpanBuilder builder = CreateBuilder();
-
-        builder.SetAttribute(attributeName, "safe-value");
-
-        Assert.That(builder.BuildAttributes(), Does.Contain(expectedAttribute));
+        return new PB_SpanBuilder(new StringWriter(), TestHtmlHelperFactory.Create());
     }
 
-    [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.InvalidAttributeNames))]
-    public void SetAttributeRejectsNamesThatCanBreakHtmlAttributeGrammar(string maliciousAttributeName)
+    private sealed class DefensiveAttributeBuilder : HtmlTagBuilder<DefensiveAttributeBuilder>
     {
-        PB_SpanBuilder builder = CreateBuilder();
+        #region Instance constructors and destructors
 
-        Assert.That(() => builder.SetAttribute(maliciousAttributeName, "safe-value"), Throws.TypeOf<ArgumentException>());
-    }
-
-    [TestCase("toggle", "data-toggle=\"modal\"")]
-    [TestCase("bs-target", "data-bs-target=\"#dialog\"")]
-    [TestCase("game.id", "data-game.id=\"42\"")]
-    [TestCase("controller:action", "data-controller:action=\"safe\"")]
-    public void SetDataAcceptsSafeSuffixes(string dataName, string expectedAttribute)
-    {
-        PB_SpanBuilder builder = CreateBuilder();
-
-        string value = dataName switch
+        public DefensiveAttributeBuilder(TextWriter writer, IHtmlHelper html)
+            : base(writer, html)
         {
-            "game.id" => "42",
-            "bs-target" => "#dialog",
-            "controller:action" => "safe",
-            _ => "modal"
-        };
-        builder.SetData(dataName, value);
+            _tag = "span";
+        }
 
-        Assert.That(builder.BuildAttributes(), Does.Contain(expectedAttribute));
+        #endregion
+
+        #region Instance methods
+
+        protected override DefensiveAttributeBuilder CreateInstance()
+        {
+            return new DefensiveAttributeBuilder(_textWriter, _htmlHelper);
+        }
+
+        public DefensiveAttributeBuilder InjectAttribute(string name, string value)
+        {
+            _attributes[name] = value;
+            return this;
+        }
+
+        #endregion
+    }
+
+    [Test]
+    public void BuildAttributesRejectsInvalidAttributeNamesInjectedBySubclasses()
+    {
+        DefensiveAttributeBuilder builder = new DefensiveAttributeBuilder(new StringWriter(), TestHtmlHelperFactory.Create())
+            .InjectAttribute("x onclick=\"alert(1)", "safe-value");
+
+        Assert.That(() => builder.BuildAttributes(), Throws.TypeOf<ArgumentException>());
     }
 
     [TestCase("label", "aria-label=\"Close\"")]
@@ -79,21 +81,6 @@ public sealed class HtmlBuilderBaseAttributeTests
 
     [TestCase("")]
     [TestCase(" ")]
-    [TestCase("toggle onclick=\"alert(1)")]
-    [TestCase("bad=data")]
-    [TestCase("bad<data")]
-    [TestCase("bad>data")]
-    [TestCase("bad`data")]
-    [TestCase("bad/data")]
-    public void SetDataRejectsMaliciousSuffixes(string maliciousSuffix)
-    {
-        PB_SpanBuilder builder = CreateBuilder();
-
-        Assert.That(() => builder.SetData(maliciousSuffix, "safe-value"), Throws.TypeOf<ArgumentException>());
-    }
-
-    [TestCase("")]
-    [TestCase(" ")]
     [TestCase("label onclick=\"alert(1)")]
     [TestCase("bad=aria")]
     [TestCase("bad<aria")]
@@ -107,13 +94,22 @@ public sealed class HtmlBuilderBaseAttributeTests
         Assert.That(() => builder.SetAria(maliciousSuffix, "safe-value"), Throws.TypeOf<ArgumentException>());
     }
 
-    [Test]
-    public void BuildAttributesRejectsInvalidAttributeNamesInjectedBySubclasses()
+    [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.CommonAttributeNames))]
+    public void SetAttributeAcceptsCommonHtmlAttributeNames(string attributeName, string expectedAttribute)
     {
-        DefensiveAttributeBuilder builder = new DefensiveAttributeBuilder(new StringWriter(), TestHtmlHelperFactory.Create())
-            .InjectAttribute("x onclick=\"alert(1)", "safe-value");
+        PB_SpanBuilder builder = CreateBuilder();
 
-        Assert.That(() => builder.BuildAttributes(), Throws.TypeOf<ArgumentException>());
+        builder.SetAttribute(attributeName, "safe-value");
+
+        Assert.That(builder.BuildAttributes(), Does.Contain(expectedAttribute));
+    }
+
+    [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.InvalidAttributeNames))]
+    public void SetAttributeRejectsNamesThatCanBreakHtmlAttributeGrammar(string maliciousAttributeName)
+    {
+        PB_SpanBuilder builder = CreateBuilder();
+
+        Assert.That(() => builder.SetAttribute(maliciousAttributeName, "safe-value"), Throws.TypeOf<ArgumentException>());
     }
 
     [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.AttributeValueInjectionAttempts))]
@@ -131,28 +127,38 @@ public sealed class HtmlBuilderBaseAttributeTests
         });
     }
 
-    private static PB_SpanBuilder CreateBuilder()
+    [TestCase("toggle", "data-toggle=\"modal\"")]
+    [TestCase("bs-target", "data-bs-target=\"#dialog\"")]
+    [TestCase("game.id", "data-game.id=\"42\"")]
+    [TestCase("controller:action", "data-controller:action=\"safe\"")]
+    public void SetDataAcceptsSafeSuffixes(string dataName, string expectedAttribute)
     {
-        return new PB_SpanBuilder(new StringWriter(), TestHtmlHelperFactory.Create());
+        PB_SpanBuilder builder = CreateBuilder();
+
+        string value = dataName switch
+        {
+            "game.id" => "42",
+            "bs-target" => "#dialog",
+            "controller:action" => "safe",
+            _ => "modal"
+        };
+        builder.SetData(dataName, value);
+
+        Assert.That(builder.BuildAttributes(), Does.Contain(expectedAttribute));
     }
 
-    private sealed class DefensiveAttributeBuilder : HtmlTagBuilder<DefensiveAttributeBuilder>
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("toggle onclick=\"alert(1)")]
+    [TestCase("bad=data")]
+    [TestCase("bad<data")]
+    [TestCase("bad>data")]
+    [TestCase("bad`data")]
+    [TestCase("bad/data")]
+    public void SetDataRejectsMaliciousSuffixes(string maliciousSuffix)
     {
-        public DefensiveAttributeBuilder(TextWriter writer, IHtmlHelper html)
-            : base(writer, html)
-        {
-            _tag = "span";
-        }
+        PB_SpanBuilder builder = CreateBuilder();
 
-        public DefensiveAttributeBuilder InjectAttribute(string name, string value)
-        {
-            _attributes[name] = value;
-            return this;
-        }
-
-        protected override DefensiveAttributeBuilder CreateInstance()
-        {
-            return new DefensiveAttributeBuilder(_textWriter, _htmlHelper);
-        }
+        Assert.That(() => builder.SetData(maliciousSuffix, "safe-value"), Throws.TypeOf<ArgumentException>());
     }
 }

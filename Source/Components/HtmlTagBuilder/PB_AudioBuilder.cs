@@ -7,8 +7,6 @@
 
 #region
 
-using System;
-using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 #endregion
@@ -39,15 +37,6 @@ namespace DMBPageBuilder
 
         /// <inheritdoc />
         protected override PB_AudioBuilder CreateInstance() => new(_textWriter, _htmlHelper);
-
-        /// <inheritdoc />
-        protected override void ValidateAttributeValue(string name, string value)
-        {
-            HtmlUrlAttributeDataPolicy dataPolicy = string.Equals(name, "src", StringComparison.OrdinalIgnoreCase)
-                ? HtmlUrlAttributeDataPolicy.Audio
-                : HtmlUrlAttributeDataPolicy.None;
-            HtmlUrlAttributeValidator.Validate(name, value, dataPolicy);
-        }
 
         /// <summary>
         ///     Sets the HTML <c>autoplay</c> attribute.
@@ -83,6 +72,15 @@ namespace DMBPageBuilder
         /// <param name="src">The value to assign to the HTML <c>src</c> attribute.</param>
         /// <returns>The current <see cref="PB_AudioBuilder" /> instance for chaining.</returns>
         public PB_AudioBuilder SetSrc(string src) => SetAttribute("src", src);
+
+        /// <inheritdoc />
+        protected override void ValidateAttributeValue(string name, string value)
+        {
+            HtmlUrlAttributeDataPolicy dataPolicy = string.Equals(name, "src", StringComparison.OrdinalIgnoreCase)
+                ? HtmlUrlAttributeDataPolicy.Audio
+                : HtmlUrlAttributeDataPolicy.None;
+            HtmlUrlAttributeValidator.Validate(name, value, dataPolicy);
+        }
 
         #endregion
     }

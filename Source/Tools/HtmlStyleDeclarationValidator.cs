@@ -5,13 +5,86 @@
 
 #endregion
 
-using System;
-
 namespace DMBPageBuilder
 {
     internal static class HtmlStyleDeclarationValidator
     {
         #region Static methods
+
+        private static int FindClosingParenthesis(string value, int startIndex)
+        {
+            bool quoteIsOpen = false;
+            char quote = '\0';
+            for (int index = startIndex; index < value.Length; index++)
+            {
+                char character = value[index];
+                if (quoteIsOpen)
+                {
+                    if (character == quote)
+                    {
+                        quoteIsOpen = false;
+                    }
+
+                    continue;
+                }
+
+                if (character is '"' or '\'')
+                {
+                    quoteIsOpen = true;
+                    quote = character;
+                    continue;
+                }
+
+                if (character == ')')
+                {
+                    return index;
+                }
+            }
+
+            return -1;
+        }
+
+        private static bool IsInsideUrlFunction(string value, int characterIndex)
+        {
+            int searchIndex = 0;
+            while (searchIndex < value.Length)
+            {
+                int urlIndex = value.IndexOf("url(", searchIndex, StringComparison.OrdinalIgnoreCase);
+                if (urlIndex < 0)
+                {
+                    return false;
+                }
+
+                int urlStartIndex = urlIndex + 4;
+                int urlEndIndex = FindClosingParenthesis(value, urlStartIndex);
+                if (urlEndIndex < 0)
+                {
+                    return false;
+                }
+
+                if (characterIndex > urlStartIndex && characterIndex < urlEndIndex)
+                {
+                    return true;
+                }
+
+                searchIndex = urlEndIndex + 1;
+            }
+
+            return false;
+        }
+
+        private static string NormalizeCssUrl(string rawUrl)
+        {
+            string url = rawUrl.Trim();
+            if (url.Length >= 2 &&
+                ((url[0] == '"' && url[^1] == '"') ||
+                 (url[0] == '\'' && url[^1] == '\'')))
+            {
+                url = url[1..^1].Trim();
+            }
+
+            return url;
+        }
 
         internal static void ValidatePropertyName(string propertyName)
         {
@@ -80,81 +153,6 @@ namespace DMBPageBuilder
             }
 
             ValidateUrlFunctions(propertyName, value);
-        }
-
-        private static int FindClosingParenthesis(string value, int startIndex)
-        {
-            bool quoteIsOpen = false;
-            char quote = '\0';
-            for (int index = startIndex; index < value.Length; index++)
-            {
-                char character = value[index];
-                if (quoteIsOpen)
-                {
-                    if (character == quote)
-                    {
-                        quoteIsOpen = false;
-                    }
-
-                    continue;
-                }
-
-                if (character is '"' or '\'')
-                {
-                    quoteIsOpen = true;
-                    quote = character;
-                    continue;
-                }
-
-                if (character == ')')
-                {
-                    return index;
-                }
-            }
-
-            return -1;
-        }
-
-        private static string NormalizeCssUrl(string rawUrl)
-        {
-            string url = rawUrl.Trim();
-            if (url.Length >= 2 &&
-                ((url[0] == '"' && url[^1] == '"') ||
-                 (url[0] == '\'' && url[^1] == '\'')))
-            {
-                url = url[1..^1].Trim();
-            }
-
-            return url;
-        }
-
-        private static bool IsInsideUrlFunction(string value, int characterIndex)
-        {
-            int searchIndex = 0;
-            while (searchIndex < value.Length)
-            {
-                int urlIndex = value.IndexOf("url(", searchIndex, StringComparison.OrdinalIgnoreCase);
-                if (urlIndex < 0)
-                {
-                    return false;
-                }
-
-                int urlStartIndex = urlIndex + 4;
-                int urlEndIndex = FindClosingParenthesis(value, urlStartIndex);
-                if (urlEndIndex < 0)
-                {
-                    return false;
-                }
-
-                if (characterIndex > urlStartIndex && characterIndex < urlEndIndex)
-                {
-                    return true;
-                }
-
-                searchIndex = urlEndIndex + 1;
-            }
-
-            return false;
         }
 
         private static void ValidateUrlFunctions(string propertyName, string value)

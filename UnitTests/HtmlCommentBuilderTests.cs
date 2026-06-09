@@ -7,9 +7,6 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using DMBPageBuilder;
 using NUnit.Framework;
 
@@ -20,6 +17,35 @@ namespace DMBPageBuilderUnitTest;
 [TestFixture]
 public sealed class HtmlCommentBuilderTests
 {
+    private static IEnumerable<TestCaseData> CommentInjectionAttempts()
+    {
+        yield return new TestCaseData("--><script>alert(1)</script><!--", "<script>")
+            .SetName("Script tag injection is encoded");
+        yield return new TestCaseData("--><style>body{display:none}</style><!--", "<style>")
+            .SetName("Style tag injection is encoded");
+        yield return new TestCaseData("--><link rel=\"stylesheet\" href=\"/evil.css\"><!--", "<link")
+            .SetName("Stylesheet link injection is encoded");
+        yield return new TestCaseData("--><img src=x onerror=alert(1)><!--", "<img")
+            .SetName("Html event handler injection is encoded");
+        yield return new TestCaseData("--><div class=\"overlay\">owned</div><!--", "<div")
+            .SetName("Html element injection is encoded");
+        yield return new TestCaseData("-leading-dash-", null)
+            .SetName("Leading and trailing dash payload cannot touch comment boundaries");
+    }
+
+    private static int CountOccurrences(string value, string pattern)
+    {
+        int count = 0;
+        int index = 0;
+        while ((index = value.IndexOf(pattern, index, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += pattern.Length;
+        }
+
+        return count;
+    }
+
     [Test]
     public void HtmlCommentEncodesTextAndNeutralizesClosingDelimiter()
     {
@@ -55,34 +81,5 @@ public sealed class HtmlCommentBuilderTests
                 Assert.That(html, Does.Not.Contain(forbiddenRawMarkup));
             }
         });
-    }
-
-    private static IEnumerable<TestCaseData> CommentInjectionAttempts()
-    {
-        yield return new TestCaseData("--><script>alert(1)</script><!--", "<script>")
-            .SetName("Script tag injection is encoded");
-        yield return new TestCaseData("--><style>body{display:none}</style><!--", "<style>")
-            .SetName("Style tag injection is encoded");
-        yield return new TestCaseData("--><link rel=\"stylesheet\" href=\"/evil.css\"><!--", "<link")
-            .SetName("Stylesheet link injection is encoded");
-        yield return new TestCaseData("--><img src=x onerror=alert(1)><!--", "<img")
-            .SetName("Html event handler injection is encoded");
-        yield return new TestCaseData("--><div class=\"overlay\">owned</div><!--", "<div")
-            .SetName("Html element injection is encoded");
-        yield return new TestCaseData("-leading-dash-", null)
-            .SetName("Leading and trailing dash payload cannot touch comment boundaries");
-    }
-
-    private static int CountOccurrences(string value, string pattern)
-    {
-        int count = 0;
-        int index = 0;
-        while ((index = value.IndexOf(pattern, index, StringComparison.Ordinal)) >= 0)
-        {
-            count++;
-            index += pattern.Length;
-        }
-
-        return count;
     }
 }

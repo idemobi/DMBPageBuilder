@@ -7,8 +7,6 @@
 
 #region
 
-using System;
-using System.Linq;
 using DMBPageBuilder;
 using NUnit.Framework;
 
@@ -19,6 +17,22 @@ namespace DMBPageBuilderUnitTest;
 [TestFixture]
 public sealed class PageInformationTests
 {
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("javascript:alert(1)")]
+    [TestCase("java\nscript:alert(1)")]
+    public void AddLinkRejectsEmptyOrUnsafeHref(string href)
+    {
+        PageInformation page = new PageInformation();
+        PageLinkDefinition link = new PageLinkDefinition
+        {
+            Rel = PageLinkRel.Stylesheet,
+            Href = href
+        };
+
+        Assert.That(() => page.AddLink(link), Throws.TypeOf<ArgumentException>());
+    }
+
     [Test]
     public void AddNullDefinitionsThrowArgumentNullException()
     {
@@ -36,22 +50,6 @@ public sealed class PageInformationTests
     [TestCase(" ")]
     [TestCase("javascript:alert(1)")]
     [TestCase("java\nscript:alert(1)")]
-    public void AddLinkRejectsEmptyOrUnsafeHref(string href)
-    {
-        PageInformation page = new PageInformation();
-        PageLinkDefinition link = new PageLinkDefinition
-        {
-            Rel = PageLinkRel.Stylesheet,
-            Href = href
-        };
-
-        Assert.That(() => page.AddLink(link), Throws.TypeOf<ArgumentException>());
-    }
-
-    [TestCase("")]
-    [TestCase(" ")]
-    [TestCase("javascript:alert(1)")]
-    [TestCase("java\nscript:alert(1)")]
     public void AddScriptRejectsEmptyOrUnsafeUrl(string url)
     {
         PageInformation page = new PageInformation();
@@ -61,26 +59,6 @@ public sealed class PageInformationTests
         };
 
         Assert.That(() => page.AddScript(script), Throws.TypeOf<ArgumentException>());
-    }
-
-    [TestCase("")]
-    [TestCase(" ")]
-    [TestCase("javascript:alert(1)")]
-    public void SetStylesheetRejectsEmptyOrUnsafeHref(string href)
-    {
-        PageInformation page = new PageInformation();
-
-        Assert.That(() => page.SetStylesheet(href), Throws.TypeOf<ArgumentException>());
-    }
-
-    [TestCase("")]
-    [TestCase(" ")]
-    [TestCase("javascript:alert(1)")]
-    public void SetScriptFileRejectsEmptyOrUnsafeUrl(string url)
-    {
-        PageInformation page = new PageInformation();
-
-        Assert.That(() => page.SetScriptFile(url), Throws.TypeOf<ArgumentException>());
     }
 
     [Test]
@@ -109,6 +87,26 @@ public sealed class PageInformationTests
             Assert.That(page.StylesheetsInline, Has.Count.EqualTo(1));
             Assert.That(page.StylesheetsInline["theme"].Content, Is.EqualTo("body { color: blue; }"));
         });
+    }
+
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("javascript:alert(1)")]
+    public void SetScriptFileRejectsEmptyOrUnsafeUrl(string url)
+    {
+        PageInformation page = new PageInformation();
+
+        Assert.That(() => page.SetScriptFile(url), Throws.TypeOf<ArgumentException>());
+    }
+
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("javascript:alert(1)")]
+    public void SetStylesheetRejectsEmptyOrUnsafeHref(string href)
+    {
+        PageInformation page = new PageInformation();
+
+        Assert.That(() => page.SetStylesheet(href), Throws.TypeOf<ArgumentException>());
     }
 
     [Test]

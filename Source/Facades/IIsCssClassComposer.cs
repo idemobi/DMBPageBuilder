@@ -5,8 +5,6 @@
 
 #endregion
 
-using System.Collections.Generic;
-
 namespace DMBPageBuilder
 {
     /// <summary>

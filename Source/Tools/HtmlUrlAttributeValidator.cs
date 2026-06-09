@@ -5,30 +5,11 @@
 
 #endregion
 
-using System;
-using System.Linq;
-
 namespace DMBPageBuilder
 {
     internal static class HtmlUrlAttributeValidator
     {
         #region Static methods
-
-        internal static void Validate(string attributeName, string value, HtmlUrlAttributeDataPolicy dataPolicy = HtmlUrlAttributeDataPolicy.None)
-        {
-            if (!IsUrlAttribute(attributeName) || string.IsNullOrEmpty(value))
-            {
-                return;
-            }
-
-            if (string.Equals(attributeName, "srcset", StringComparison.OrdinalIgnoreCase))
-            {
-                ValidateSrcSet(value, dataPolicy);
-                return;
-            }
-
-            ValidateSingleUrl(attributeName, value, dataPolicy);
-        }
 
         private static int GetSchemeEndIndex(string value)
         {
@@ -108,6 +89,22 @@ namespace DMBPageBuilder
                    string.Equals(attributeName, "poster", StringComparison.OrdinalIgnoreCase) ||
                    string.Equals(attributeName, "cite", StringComparison.OrdinalIgnoreCase) ||
                    string.Equals(attributeName, "data", StringComparison.OrdinalIgnoreCase);
+        }
+
+        internal static void Validate(string attributeName, string value, HtmlUrlAttributeDataPolicy dataPolicy = HtmlUrlAttributeDataPolicy.None)
+        {
+            if (!IsUrlAttribute(attributeName) || string.IsNullOrEmpty(value))
+            {
+                return;
+            }
+
+            if (string.Equals(attributeName, "srcset", StringComparison.OrdinalIgnoreCase))
+            {
+                ValidateSrcSet(value, dataPolicy);
+                return;
+            }
+
+            ValidateSingleUrl(attributeName, value, dataPolicy);
         }
 
         private static void ValidateSingleUrl(string attributeName, string value, HtmlUrlAttributeDataPolicy dataPolicy)

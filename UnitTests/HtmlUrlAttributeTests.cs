@@ -7,8 +7,6 @@
 
 #region
 
-using System;
-using System.IO;
 using DMBPageBuilder;
 using NUnit.Framework;
 
@@ -50,15 +48,22 @@ public sealed class HtmlUrlAttributeTests
         Assert.That(() => builder.SetHref(href), Throws.TypeOf<ArgumentException>());
     }
 
-    [TestCase("href", "javascript:alert(1)")]
-    [TestCase("src", "javascript:alert(1)")]
-    [TestCase("action", "javascript:alert(1)")]
-    [TestCase("poster", "data:text/html,<script>alert(1)</script>")]
-    public void SetAttributeRejectsDangerousUrlAttributeValues(string attributeName, string value)
+    [Test]
+    public void AudioAndVideoBuildersAcceptMatchingMediaDataUrls()
     {
-        PB_SpanBuilder builder = new PB_SpanBuilder(new StringWriter(), TestHtmlHelperFactory.Create());
+        PB_AudioBuilder audioBuilder = new PB_AudioBuilder(new StringWriter(), TestHtmlHelperFactory.Create());
+        PB_VideoBuilder videoBuilder = new PB_VideoBuilder(new StringWriter(), TestHtmlHelperFactory.Create());
 
-        Assert.That(() => builder.SetAttribute(attributeName, value), Throws.TypeOf<ArgumentException>());
+        audioBuilder.SetSrc("data:audio/mpeg;base64,AAAA");
+        videoBuilder.SetSrc("data:video/mp4;base64,AAAA");
+        videoBuilder.SetPoster("data:image/png;base64,AAAA");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(audioBuilder.BuildAttributes(), Does.Contain("src=\"data:audio/mpeg;base64,AAAA\""));
+            Assert.That(videoBuilder.BuildAttributes(), Does.Contain("src=\"data:video/mp4;base64,AAAA\""));
+            Assert.That(videoBuilder.BuildAttributes(), Does.Contain("poster=\"data:image/png;base64,AAAA\""));
+        });
     }
 
     [Test]
@@ -81,32 +86,6 @@ public sealed class HtmlUrlAttributeTests
         Assert.That(() => builder.SetSrc(src), Throws.TypeOf<ArgumentException>());
     }
 
-    [Test]
-    public void AudioAndVideoBuildersAcceptMatchingMediaDataUrls()
-    {
-        PB_AudioBuilder audioBuilder = new PB_AudioBuilder(new StringWriter(), TestHtmlHelperFactory.Create());
-        PB_VideoBuilder videoBuilder = new PB_VideoBuilder(new StringWriter(), TestHtmlHelperFactory.Create());
-
-        audioBuilder.SetSrc("data:audio/mpeg;base64,AAAA");
-        videoBuilder.SetSrc("data:video/mp4;base64,AAAA");
-        videoBuilder.SetPoster("data:image/png;base64,AAAA");
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(audioBuilder.BuildAttributes(), Does.Contain("src=\"data:audio/mpeg;base64,AAAA\""));
-            Assert.That(videoBuilder.BuildAttributes(), Does.Contain("src=\"data:video/mp4;base64,AAAA\""));
-            Assert.That(videoBuilder.BuildAttributes(), Does.Contain("poster=\"data:image/png;base64,AAAA\""));
-        });
-    }
-
-    [Test]
-    public void SourceSrcSetRejectsDangerousCandidateUrls()
-    {
-        PB_SourceBuilder builder = new PB_SourceBuilder(new StringWriter(), TestHtmlHelperFactory.Create());
-
-        Assert.That(() => builder.SetSrcSet("/img/a.png 1x, javascript:alert(1) 2x"), Throws.TypeOf<ArgumentException>());
-    }
-
     [TestCase("javascript:alert(1)", true)]
     [TestCase("data:text/html,<script>alert(1)</script>", false)]
     public void PageInformationRejectsDangerousHeadAssetUrlsWhenRegistered(string url, bool script)
@@ -126,4 +105,22 @@ public sealed class HtmlUrlAttributeTests
             Throws.TypeOf<ArgumentException>());
     }
 
+    [TestCase("href", "javascript:alert(1)")]
+    [TestCase("src", "javascript:alert(1)")]
+    [TestCase("action", "javascript:alert(1)")]
+    [TestCase("poster", "data:text/html,<script>alert(1)</script>")]
+    public void SetAttributeRejectsDangerousUrlAttributeValues(string attributeName, string value)
+    {
+        PB_SpanBuilder builder = new PB_SpanBuilder(new StringWriter(), TestHtmlHelperFactory.Create());
+
+        Assert.That(() => builder.SetAttribute(attributeName, value), Throws.TypeOf<ArgumentException>());
+    }
+
+    [Test]
+    public void SourceSrcSetRejectsDangerousCandidateUrls()
+    {
+        PB_SourceBuilder builder = new PB_SourceBuilder(new StringWriter(), TestHtmlHelperFactory.Create());
+
+        Assert.That(() => builder.SetSrcSet("/img/a.png 1x, javascript:alert(1) 2x"), Throws.TypeOf<ArgumentException>());
+    }
 }

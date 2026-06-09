@@ -7,8 +7,6 @@
 
 #region
 
-using System;
-using System.IO;
 using System.Text.Encodings.Web;
 using DMBPageBuilder;
 using Microsoft.AspNetCore.Html;
@@ -22,6 +20,103 @@ namespace DMBPageBuilderUnitTest;
 [TestFixture]
 public sealed class HtmlTagNameTests
 {
+    private static string RenderContent(IHtmlContent content)
+    {
+        using StringWriter writer = new StringWriter();
+        content.WriteTo(writer, HtmlEncoder.Default);
+        return writer.ToString();
+    }
+
+    private sealed class TestConstrainedTagBuilder : HtmlConstrainedTagBuilder<TestConstrainedTagBuilder>
+    {
+        #region Instance constructors and destructors
+
+        public TestConstrainedTagBuilder(TextWriter writer, IHtmlHelper html)
+            : base(writer, html)
+        {
+        }
+
+        #endregion
+
+        #region Instance methods
+
+        protected override TestConstrainedTagBuilder CreateInstance()
+        {
+            return new TestConstrainedTagBuilder(_textWriter, _htmlHelper);
+        }
+
+        public TestConstrainedTagBuilder SetTagForTest(string tagName)
+        {
+            _tag = tagName;
+            return this;
+        }
+
+        #endregion
+    }
+
+    private sealed class TestTagBuilder : HtmlTagBuilder<TestTagBuilder>
+    {
+        #region Instance constructors and destructors
+
+        public TestTagBuilder(TextWriter writer, IHtmlHelper html)
+            : base(writer, html)
+        {
+        }
+
+        #endregion
+
+        #region Instance methods
+
+        protected override TestTagBuilder CreateInstance()
+        {
+            return new TestTagBuilder(_textWriter, _htmlHelper);
+        }
+
+        public TestTagBuilder SetTagForTest(string tagName)
+        {
+            _tag = tagName;
+            return this;
+        }
+
+        #endregion
+    }
+
+    private sealed class TestVoidTagBuilder : HtmlVoidTagBuilder<TestVoidTagBuilder>
+    {
+        #region Instance constructors and destructors
+
+        public TestVoidTagBuilder(TextWriter writer, IHtmlHelper html)
+            : base(writer, html)
+        {
+        }
+
+        #endregion
+
+        #region Instance methods
+
+        protected override TestVoidTagBuilder CreateInstance()
+        {
+            return new TestVoidTagBuilder(_textWriter, _htmlHelper);
+        }
+
+        public TestVoidTagBuilder SetTagForTest(string tagName)
+        {
+            _tag = tagName;
+            return this;
+        }
+
+        #endregion
+    }
+
+    [Test]
+    public void HtmlConstrainedTagBuilderRejectsUnsafeTagNames()
+    {
+        TestConstrainedTagBuilder builder = new TestConstrainedTagBuilder(new StringWriter(), TestHtmlHelperFactory.Create())
+            .SetTagForTest("li onclick=\"alert(1)");
+
+        Assert.That(() => RenderContent(builder), Throws.TypeOf<ArgumentException>());
+    }
+
     [TestCase("div")]
     [TestCase("custom-element")]
     [TestCase("svg:path")]
@@ -38,6 +133,21 @@ public sealed class HtmlTagNameTests
             Assert.That(html, Does.StartWith($"<{tagName}"));
             Assert.That(html, Does.EndWith($"</{tagName}>"));
             Assert.That(html, Does.Not.Contain("onclick"));
+        });
+    }
+
+    [Test]
+    public void HtmlTagBuilderBeginRejectsUnsafeTagNameWithoutWritingUnsafeElement()
+    {
+        using StringWriter writer = new StringWriter();
+        TestTagBuilder builder = new TestTagBuilder(writer, TestHtmlHelperFactory.Create())
+            .SetTagForTest("div onclick=\"alert(1)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(() => builder.Begin(), Throws.TypeOf<ArgumentException>());
+            Assert.That(writer.ToString(), Does.Not.Contain("<div"));
+            Assert.That(writer.ToString(), Does.Not.Contain("onclick"));
         });
     }
 
@@ -61,99 +171,11 @@ public sealed class HtmlTagNameTests
     }
 
     [Test]
-    public void HtmlTagBuilderBeginRejectsUnsafeTagNameWithoutWritingUnsafeElement()
-    {
-        using StringWriter writer = new StringWriter();
-        TestTagBuilder builder = new TestTagBuilder(writer, TestHtmlHelperFactory.Create())
-            .SetTagForTest("div onclick=\"alert(1)");
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(() => builder.Begin(), Throws.TypeOf<ArgumentException>());
-            Assert.That(writer.ToString(), Does.Not.Contain("<div"));
-            Assert.That(writer.ToString(), Does.Not.Contain("onclick"));
-        });
-    }
-
-    [Test]
     public void HtmlVoidTagBuilderRejectsUnsafeTagNames()
     {
         TestVoidTagBuilder builder = new TestVoidTagBuilder(new StringWriter(), TestHtmlHelperFactory.Create())
             .SetTagForTest("img onerror=\"alert(1)");
 
         Assert.That(() => RenderContent(builder), Throws.TypeOf<ArgumentException>());
-    }
-
-    [Test]
-    public void HtmlConstrainedTagBuilderRejectsUnsafeTagNames()
-    {
-        TestConstrainedTagBuilder builder = new TestConstrainedTagBuilder(new StringWriter(), TestHtmlHelperFactory.Create())
-            .SetTagForTest("li onclick=\"alert(1)");
-
-        Assert.That(() => RenderContent(builder), Throws.TypeOf<ArgumentException>());
-    }
-
-    private static string RenderContent(IHtmlContent content)
-    {
-        using StringWriter writer = new StringWriter();
-        content.WriteTo(writer, HtmlEncoder.Default);
-        return writer.ToString();
-    }
-
-    private sealed class TestConstrainedTagBuilder : HtmlConstrainedTagBuilder<TestConstrainedTagBuilder>
-    {
-        public TestConstrainedTagBuilder(TextWriter writer, IHtmlHelper html)
-            : base(writer, html)
-        {
-        }
-
-        public TestConstrainedTagBuilder SetTagForTest(string tagName)
-        {
-            _tag = tagName;
-            return this;
-        }
-
-        protected override TestConstrainedTagBuilder CreateInstance()
-        {
-            return new TestConstrainedTagBuilder(_textWriter, _htmlHelper);
-        }
-    }
-
-    private sealed class TestTagBuilder : HtmlTagBuilder<TestTagBuilder>
-    {
-        public TestTagBuilder(TextWriter writer, IHtmlHelper html)
-            : base(writer, html)
-        {
-        }
-
-        public TestTagBuilder SetTagForTest(string tagName)
-        {
-            _tag = tagName;
-            return this;
-        }
-
-        protected override TestTagBuilder CreateInstance()
-        {
-            return new TestTagBuilder(_textWriter, _htmlHelper);
-        }
-    }
-
-    private sealed class TestVoidTagBuilder : HtmlVoidTagBuilder<TestVoidTagBuilder>
-    {
-        public TestVoidTagBuilder(TextWriter writer, IHtmlHelper html)
-            : base(writer, html)
-        {
-        }
-
-        public TestVoidTagBuilder SetTagForTest(string tagName)
-        {
-            _tag = tagName;
-            return this;
-        }
-
-        protected override TestVoidTagBuilder CreateInstance()
-        {
-            return new TestVoidTagBuilder(_textWriter, _htmlHelper);
-        }
     }
 }

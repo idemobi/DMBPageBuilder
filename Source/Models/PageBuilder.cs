@@ -7,10 +7,7 @@
 
 #region
 
-using System;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text.Encodings.Web;
 using DMBServerHelper;
 using DMBServerWebHelper;
@@ -73,6 +70,24 @@ namespace DMBPageBuilder
             WriteArtificialIntelligenceMeta(writer, "ai:training-permission", metaData.TrainingPermission);
             WriteArtificialIntelligenceMeta(writer, "ai:quotas", metaData.Quotas);
             WriteArtificialIntelligenceMeta(writer, "ai:disclaimer", metaData.Disclaimer);
+        }
+
+        private static void WriteFaviconLink(TextWriter writer, string rel, string href, string? type = null, string? sizes = null)
+        {
+            HtmlAssetUrlValidator.ValidateRequiredUrl("href", href);
+            writer.Write($@"<link rel=""{HtmlEncoder.Default.Encode(rel)}"" href=""{HtmlEncoder.Default.Encode(AppendVersion(href))}""");
+
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                writer.Write($@" type=""{HtmlEncoder.Default.Encode(type)}""");
+            }
+
+            if (!string.IsNullOrWhiteSpace(sizes))
+            {
+                writer.Write($@" sizes=""{HtmlEncoder.Default.Encode(sizes)}""");
+            }
+
+            writer.Write(">");
         }
 
         private static void WriteLink(TextWriter writer, PageLinkDefinition link)
@@ -271,6 +286,15 @@ namespace DMBPageBuilder
             return new HtmlString(writer.ToString());
         }
 
+        private void RenderDocumentEndBody()
+        {
+            _page.BodyBuilder.RenderMainEnd(_writerEndBody, _html, _page);
+            _page.BodyBuilder.RenderFooterStart(_writerEndBody, _html, _page);
+            _page.BodyBuilder.RenderFooterEnd(_writerEndBody, _html, _page);
+            _writerEndBody.Write(RenderEndOfBodyScriptsString());
+            _page.BodyBuilder.RenderBodyEnd(_writerEndBody, _html, _page);
+        }
+
         /// <summary>
         ///     Renders the document start, head content, opening body regions, and opening main content region.
         /// </summary>
@@ -299,27 +323,12 @@ namespace DMBPageBuilder
             return new HtmlString(writer.ToString());
         }
 
-        private void RenderDocumentEndBody()
-        {
-            _page.BodyBuilder.RenderMainEnd(_writerEndBody, _html, _page);
-            _page.BodyBuilder.RenderFooterStart(_writerEndBody, _html, _page);
-            _page.BodyBuilder.RenderFooterEnd(_writerEndBody, _html, _page);
-            _writerEndBody.Write(RenderEndOfBodyScriptsString());
-            _page.BodyBuilder.RenderBodyEnd(_writerEndBody, _html, _page);
-        }
-
         private void RenderDocumentStartBody()
         {
             _page.BodyBuilder.RenderBodyStart(_writerStartBody, _html, _page);
             _page.BodyBuilder.RenderHeaderStart(_writerStartBody, _html, _page);
             _page.BodyBuilder.RenderHeaderEnd(_writerStartBody, _html, _page);
             _page.BodyBuilder.RenderMainStart(_writerStartBody, _html, _page);
-        }
-
-        private void ResetBodyWriters()
-        {
-            _writerStartBody = new StringWriter(CultureInfo.InvariantCulture);
-            _writerEndBody = new StringWriter(CultureInfo.InvariantCulture);
         }
 
         private string RenderEndOfBodyScriptsString()
@@ -424,6 +433,12 @@ namespace DMBPageBuilder
             return writer.ToString();
         }
 
+        private void ResetBodyWriters()
+        {
+            _writerStartBody = new StringWriter(CultureInfo.InvariantCulture);
+            _writerEndBody = new StringWriter(CultureInfo.InvariantCulture);
+        }
+
         private void WriteFavicons(TextWriter writer)
         {
             if (_page.FaviconSet == PageFaviconSet.None)
@@ -459,24 +474,6 @@ namespace DMBPageBuilder
                     WriteFaviconLink(writer, "icon", $"{basePath}android-chrome-512x512.png", "image/png", "512x512");
                 break;
             }
-        }
-
-        private static void WriteFaviconLink(TextWriter writer, string rel, string href, string? type = null, string? sizes = null)
-        {
-            HtmlAssetUrlValidator.ValidateRequiredUrl("href", href);
-            writer.Write($@"<link rel=""{HtmlEncoder.Default.Encode(rel)}"" href=""{HtmlEncoder.Default.Encode(AppendVersion(href))}""");
-
-            if (!string.IsNullOrWhiteSpace(type))
-            {
-                writer.Write($@" type=""{HtmlEncoder.Default.Encode(type)}""");
-            }
-
-            if (!string.IsNullOrWhiteSpace(sizes))
-            {
-                writer.Write($@" sizes=""{HtmlEncoder.Default.Encode(sizes)}""");
-            }
-
-            writer.Write(">");
         }
 
         #endregion

@@ -7,8 +7,6 @@
 
 #region
 
-using System;
-using System.IO;
 using System.Text.Encodings.Web;
 using DMBPageBuilder;
 using DMBServerHelper;
@@ -25,6 +23,239 @@ namespace DMBPageBuilderUnitTest;
 [TestFixture]
 public sealed class PageBuilderRenderingTests
 {
+    private static string RenderContent(IHtmlContent content)
+    {
+        using StringWriter writer = new();
+        content.WriteTo(writer, HtmlEncoder.Default);
+        return writer.ToString();
+    }
+
+    private static int CountOccurrences(string value, string pattern)
+    {
+        int count = 0;
+        int index = 0;
+        while ((index = value.IndexOf(pattern, index, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += pattern.Length;
+        }
+
+        return count;
+    }
+
+    private sealed class TestCookieConsentComposer : ICookieConsentComposer
+    {
+        #region Instance methods
+
+        #region From interface ICookieConsentComposer
+
+        public IHtmlContent RenderCookieConsent(IHtmlHelper htmlHelper, PageInformation page, CookieDefinition cookieConsent, HttpContext context)
+        {
+            return new TestCookieConsentHtmlContent();
+        }
+
+        #endregion
+
+        #endregion
+    }
+
+    private sealed class TestCookieConsentHtmlContent : IHtmlContent
+    {
+        #region Instance methods
+
+        public override string ToString()
+        {
+            return "TO_STRING_COOKIE_CONSENT";
+        }
+
+        #region From interface IHtmlContent
+
+        public void WriteTo(TextWriter writer, HtmlEncoder encoder)
+        {
+            writer.Write("<aside data-cookie-consent=\"true\"></aside>");
+        }
+
+        #endregion
+
+        #endregion
+    }
+
+    private sealed class StatefulBodyBuilder : IBodyBuilder
+    {
+        #region Instance fields and properties
+
+        private TextWriter? _startWriter;
+
+        #endregion
+
+        #region Instance methods
+
+        #region From interface IBodyBuilder
+
+        public void RenderBodyEnd(TextWriter writer, IHtmlHelper html, PageInformation page)
+        {
+            writer.Write("</body>");
+        }
+
+        public void RenderBodyStart(TextWriter writer, IHtmlHelper html, PageInformation page)
+        {
+            writer.Write("<body>");
+        }
+
+        public void RenderFooterEnd(TextWriter writer, IHtmlHelper html, PageInformation page)
+        {
+            writer.Write("</footer>");
+        }
+
+        public void RenderFooterStart(TextWriter writer, IHtmlHelper html, PageInformation page)
+        {
+            writer.Write("<footer>");
+        }
+
+        public void RenderHeaderEnd(TextWriter writer, IHtmlHelper html, PageInformation page)
+        {
+            writer.Write("</header>");
+        }
+
+        public void RenderHeaderStart(TextWriter writer, IHtmlHelper html, PageInformation page)
+        {
+            writer.Write("<header>");
+        }
+
+        public void RenderMainEnd(TextWriter writer, IHtmlHelper html, PageInformation page)
+        {
+            _startWriter?.Write("</section>");
+            writer.Write("</main>");
+        }
+
+        public void RenderMainStart(TextWriter writer, IHtmlHelper html, PageInformation page)
+        {
+            writer.Write("<main>");
+            writer.Write("<section class=\"stateful\">");
+            _startWriter = writer;
+        }
+
+        #endregion
+
+        #endregion
+    }
+
+    [Test]
+    public void BodyClassDeduplicationPreservesUniqueClasses()
+    {
+        BasicBodyBuilder bodyBuilder = new BasicBodyBuilder();
+        bodyBuilder.BodyClasses.Add("layout");
+        bodyBuilder.BodyClasses.Add("layout");
+        bodyBuilder.BodyClasses.Add("dark");
+        bodyBuilder.BodyClasses.Add("dark");
+
+        PageInformation page = new PageInformation { BodyBuilder = bodyBuilder };
+        PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
+
+        string html = RenderContent(builder.RenderDocumentStart(new DefaultHttpContext()));
+
+        Assert.That(CountOccurrences(html, "layout"), Is.EqualTo(1));
+        Assert.That(CountOccurrences(html, "dark"), Is.EqualTo(1));
+    }
+
+    [Test]
+    public void CookieConsentComposerContentIsRenderedThroughWriteTo()
+    {
+        CookieBool? previousCookieConsent = ServerWebHelperConfiguration.CookieConsent;
+        try
+        {
+            ServerWebHelperConfiguration.CookieConsent = new CookieBool(
+                $"PageBuilderConsent_{Guid.NewGuid():N}",
+                "Consent",
+                "Consent",
+                CookieDefinitionGroup.Consent,
+                false);
+            PageInformation page = new PageInformation
+            {
+                CookieConsentComposer = new TestCookieConsentComposer()
+            };
+            PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
+            DefaultHttpContext context = new DefaultHttpContext();
+
+            _ = RenderContent(builder.RenderDocumentStart(context));
+            string html = RenderContent(builder.RenderDocumentEnd(context));
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(html, Does.Contain("<aside data-cookie-consent=\"true\"></aside>"));
+                Assert.That(html, Does.Not.Contain("TO_STRING_COOKIE_CONSENT"));
+            });
+        }
+        finally
+        {
+            ServerWebHelperConfiguration.CookieConsent = previousCookieConsent;
+        }
+    }
+
+    [Test]
+    public void CultureNameIsRenderedInHtmlLangAttribute()
+    {
+        PageInformation page = new PageInformation()
+            .SetCulture(new System.Globalization.CultureInfo("fr-FR"));
+        PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
+
+        string html = RenderContent(builder.RenderDocumentStart(new DefaultHttpContext()));
+
+        Assert.That(html, Does.Contain("<html lang=\"fr-FR\">"));
+    }
+
+    [Test]
+    public void FaviconLinksAreRenderedFromSafeLocalPaths()
+    {
+        PageInformation page = new PageInformation()
+            .SetFavicon(PageFaviconSet.Default, "/icons/", "app");
+        PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
+
+        string html = RenderContent(builder.RenderDocumentStart(new DefaultHttpContext()));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(html, Does.Contain(@"<link rel=""icon"" href=""/icons/app.ico"));
+            Assert.That(html, Does.Contain(@"<link rel=""icon"" href=""/icons/app-16x16.png"));
+            Assert.That(html, Does.Contain(@"<link rel=""icon"" href=""/icons/app-32x32.png"));
+            Assert.That(html, Does.Contain(@"<link rel=""apple-touch-icon"" href=""/icons/apple-touch-icon-180x180.png"));
+            Assert.That(html, Does.Contain(@"sizes=""180x180"">"));
+        });
+    }
+
+    [TestCase("javascript:alert(1)", "favicon")]
+    [TestCase("/icons/\n", "favicon")]
+    [TestCase("/icons/", "java\nscript:alert(1)")]
+    public void FaviconLinksRejectUnsafeGeneratedUrls(string basePath, string baseName)
+    {
+        PageInformation page = new PageInformation()
+            .SetFavicon(PageFaviconSet.Minimal, basePath, baseName);
+        PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
+
+        Assert.That(() => RenderContent(builder.RenderDocumentStart(new DefaultHttpContext())), Throws.TypeOf<ArgumentException>());
+    }
+
+    [Test]
+    public void HeadScriptAppearsInHeadAndNotInEndOfBody()
+    {
+        PageInformation page = new PageInformation()
+            .SetScriptFile("/head.js", PageScriptLocation.Head)
+            .SetScriptFile("/body.js", PageScriptLocation.EndOfBody);
+        PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
+        DefaultHttpContext context = new DefaultHttpContext();
+
+        string start = RenderContent(builder.RenderDocumentStart(context));
+        string end = RenderContent(builder.RenderDocumentEnd(context));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(start, Does.Contain("/head.js"));
+            Assert.That(start, Does.Not.Contain("/body.js"));
+            Assert.That(end, Does.Contain("/body.js"));
+            Assert.That(end, Does.Not.Contain("/head.js"));
+        });
+    }
+
     [Test]
     public void InlineAssetCommentNamesAreEncodedWithoutEncodingInlineContent()
     {
@@ -68,6 +299,27 @@ public sealed class PageBuilderRenderingTests
     }
 
     [Test]
+    public void InlineScriptInHeadAppearsInHeadAndNotInEndOfBody()
+    {
+        PageInformation page = new PageInformation()
+            .AddScriptInline("head-init", "window.head = true;", PageScriptLocation.Head)
+            .AddScriptInline("body-init", "window.body = true;", PageScriptLocation.EndOfBody);
+        PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
+        DefaultHttpContext context = new DefaultHttpContext();
+
+        string start = RenderContent(builder.RenderDocumentStart(context));
+        string end = RenderContent(builder.RenderDocumentEnd(context));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(start, Does.Contain("window.head = true;"));
+            Assert.That(start, Does.Not.Contain("window.body = true;"));
+            Assert.That(end, Does.Contain("window.body = true;"));
+            Assert.That(end, Does.Not.Contain("window.head = true;"));
+        });
+    }
+
+    [Test]
     public void InlineStyleContentCannotCloseStyleElementPrematurely()
     {
         PageInformation page = new PageInformation()
@@ -88,88 +340,38 @@ public sealed class PageBuilderRenderingTests
     }
 
     [Test]
-    public void FaviconLinksAreRenderedFromSafeLocalPaths()
+    public void KeywordsAreRenderedAsMetaTagInHead()
     {
-        PageInformation page = new PageInformation()
-            .SetFavicon(PageFaviconSet.Default, "/icons/", "app");
+        PageInformation page = new PageInformation().SetKeywords("framework", "dotnet", "mvc");
         PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
 
         string html = RenderContent(builder.RenderDocumentStart(new DefaultHttpContext()));
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(html, Does.Contain(@"<link rel=""icon"" href=""/icons/app.ico"));
-            Assert.That(html, Does.Contain(@"<link rel=""icon"" href=""/icons/app-16x16.png"));
-            Assert.That(html, Does.Contain(@"<link rel=""icon"" href=""/icons/app-32x32.png"));
-            Assert.That(html, Does.Contain(@"<link rel=""apple-touch-icon"" href=""/icons/apple-touch-icon-180x180.png"));
-            Assert.That(html, Does.Contain(@"sizes=""180x180"">"));
-        });
+        Assert.That(html, Does.Contain("name=\"keywords\" content=\"framework, dotnet, mvc\""));
     }
 
-    [TestCase("javascript:alert(1)", "favicon")]
-    [TestCase("/icons/\n", "favicon")]
-    [TestCase("/icons/", "java\nscript:alert(1)")]
-    public void FaviconLinksRejectUnsafeGeneratedUrls(string basePath, string baseName)
+    [Test]
+    public void KeywordsTagIsNotRenderedWhenKeywordsListIsEmpty()
     {
-        PageInformation page = new PageInformation()
-            .SetFavicon(PageFaviconSet.Minimal, basePath, baseName);
+        PageInformation page = new PageInformation();
         PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
 
-        Assert.That(() => RenderContent(builder.RenderDocumentStart(new DefaultHttpContext())), Throws.TypeOf<ArgumentException>());
+        string html = RenderContent(builder.RenderDocumentStart(new DefaultHttpContext()));
+
+        Assert.That(html, Does.Not.Contain("name=\"keywords\""));
     }
 
     [Test]
-    public void CookieConsentComposerContentIsRenderedThroughWriteTo()
+    public void RenderDocumentEndAlwaysClosesHtmlTag()
     {
-        CookieBool? previousCookieConsent = ServerWebHelperConfiguration.CookieConsent;
-        try
-        {
-            ServerWebHelperConfiguration.CookieConsent = new CookieBool(
-                $"PageBuilderConsent_{Guid.NewGuid():N}",
-                "Consent",
-                "Consent",
-                CookieDefinitionGroup.Consent,
-                false);
-            PageInformation page = new PageInformation
-            {
-                CookieConsentComposer = new TestCookieConsentComposer()
-            };
-            PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
-            DefaultHttpContext context = new DefaultHttpContext();
-
-            _ = RenderContent(builder.RenderDocumentStart(context));
-            string html = RenderContent(builder.RenderDocumentEnd(context));
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(html, Does.Contain("<aside data-cookie-consent=\"true\"></aside>"));
-                Assert.That(html, Does.Not.Contain("TO_STRING_COOKIE_CONSENT"));
-            });
-        }
-        finally
-        {
-            ServerWebHelperConfiguration.CookieConsent = previousCookieConsent;
-        }
-    }
-
-    [Test]
-    public void RenderDocumentStartIsIdempotentForSameBuilderInstance()
-    {
-        PageInformation page = new PageInformation()
-            .SetTitle("Dashboard")
-            .SetScriptFile("/js/end.js", PageScriptLocation.EndOfBody);
+        PageInformation page = new PageInformation();
         PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
         DefaultHttpContext context = new DefaultHttpContext();
 
-        string firstRender = RenderContent(builder.RenderDocumentStart(context));
-        string secondRender = RenderContent(builder.RenderDocumentStart(context));
+        _ = RenderContent(builder.RenderDocumentStart(context));
+        string end = RenderContent(builder.RenderDocumentEnd(context));
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(secondRender, Is.EqualTo(firstRender));
-            Assert.That(CountOccurrences(secondRender, "<body"), Is.EqualTo(1));
-            Assert.That(CountOccurrences(secondRender, "<main"), Is.EqualTo(1));
-        });
+        Assert.That(end, Does.EndWith("</html>"));
     }
 
     [Test]
@@ -197,12 +399,11 @@ public sealed class PageBuilderRenderingTests
     }
 
     [Test]
-    public void RenderDocumentStartSupportsBodyBuildersThatCloseStartWriterDuringEndRendering()
+    public void RenderDocumentStartIsIdempotentForSameBuilderInstance()
     {
-        PageInformation page = new PageInformation
-        {
-            BodyBuilder = new StatefulBodyBuilder()
-        };
+        PageInformation page = new PageInformation()
+            .SetTitle("Dashboard")
+            .SetScriptFile("/js/end.js", PageScriptLocation.EndOfBody);
         PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
         DefaultHttpContext context = new DefaultHttpContext();
 
@@ -212,8 +413,8 @@ public sealed class PageBuilderRenderingTests
         Assert.Multiple(() =>
         {
             Assert.That(secondRender, Is.EqualTo(firstRender));
-            Assert.That(secondRender, Does.Contain("<section class=\"stateful\"></section>"));
-            Assert.That(CountOccurrences(secondRender, "<section class=\"stateful\">"), Is.EqualTo(1));
+            Assert.That(CountOccurrences(secondRender, "<body"), Is.EqualTo(1));
+            Assert.That(CountOccurrences(secondRender, "<main"), Is.EqualTo(1));
         });
     }
 
@@ -267,88 +468,23 @@ public sealed class PageBuilderRenderingTests
     }
 
     [Test]
-    public void ViewportMetaIsAutoInjectedWhenAbsent()
+    public void RenderDocumentStartSupportsBodyBuildersThatCloseStartWriterDuringEndRendering()
     {
-        PageInformation page = new PageInformation();
-        PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
-
-        string html = RenderContent(builder.RenderDocumentStart(new DefaultHttpContext()));
-
-        Assert.That(html, Does.Contain("name=\"viewport\""));
-    }
-
-    [Test]
-    public void ViewportMetaIsNotDuplicatedWhenAlreadyPresent()
-    {
-        PageInformation page = new PageInformation().SetViewport("width=device-width");
-        PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
-
-        string html = RenderContent(builder.RenderDocumentStart(new DefaultHttpContext()));
-
-        Assert.That(CountOccurrences(html, "name=\"viewport\""), Is.EqualTo(1));
-    }
-
-    [Test]
-    public void KeywordsAreRenderedAsMetaTagInHead()
-    {
-        PageInformation page = new PageInformation().SetKeywords("framework", "dotnet", "mvc");
-        PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
-
-        string html = RenderContent(builder.RenderDocumentStart(new DefaultHttpContext()));
-
-        Assert.That(html, Does.Contain("name=\"keywords\" content=\"framework, dotnet, mvc\""));
-    }
-
-    [Test]
-    public void KeywordsTagIsNotRenderedWhenKeywordsListIsEmpty()
-    {
-        PageInformation page = new PageInformation();
-        PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
-
-        string html = RenderContent(builder.RenderDocumentStart(new DefaultHttpContext()));
-
-        Assert.That(html, Does.Not.Contain("name=\"keywords\""));
-    }
-
-    [Test]
-    public void HeadScriptAppearsInHeadAndNotInEndOfBody()
-    {
-        PageInformation page = new PageInformation()
-            .SetScriptFile("/head.js", PageScriptLocation.Head)
-            .SetScriptFile("/body.js", PageScriptLocation.EndOfBody);
+        PageInformation page = new PageInformation
+        {
+            BodyBuilder = new StatefulBodyBuilder()
+        };
         PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
         DefaultHttpContext context = new DefaultHttpContext();
 
-        string start = RenderContent(builder.RenderDocumentStart(context));
-        string end = RenderContent(builder.RenderDocumentEnd(context));
+        string firstRender = RenderContent(builder.RenderDocumentStart(context));
+        string secondRender = RenderContent(builder.RenderDocumentStart(context));
 
         Assert.Multiple(() =>
         {
-            Assert.That(start, Does.Contain("/head.js"));
-            Assert.That(start, Does.Not.Contain("/body.js"));
-            Assert.That(end, Does.Contain("/body.js"));
-            Assert.That(end, Does.Not.Contain("/head.js"));
-        });
-    }
-
-    [Test]
-    public void InlineScriptInHeadAppearsInHeadAndNotInEndOfBody()
-    {
-        PageInformation page = new PageInformation()
-            .AddScriptInline("head-init", "window.head = true;", PageScriptLocation.Head)
-            .AddScriptInline("body-init", "window.body = true;", PageScriptLocation.EndOfBody);
-        PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
-        DefaultHttpContext context = new DefaultHttpContext();
-
-        string start = RenderContent(builder.RenderDocumentStart(context));
-        string end = RenderContent(builder.RenderDocumentEnd(context));
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(start, Does.Contain("window.head = true;"));
-            Assert.That(start, Does.Not.Contain("window.body = true;"));
-            Assert.That(end, Does.Contain("window.body = true;"));
-            Assert.That(end, Does.Not.Contain("window.head = true;"));
+            Assert.That(secondRender, Is.EqualTo(firstRender));
+            Assert.That(secondRender, Does.Contain("<section class=\"stateful\"></section>"));
+            Assert.That(CountOccurrences(secondRender, "<section class=\"stateful\">"), Is.EqualTo(1));
         });
     }
 
@@ -388,134 +524,24 @@ public sealed class PageBuilderRenderingTests
     }
 
     [Test]
-    public void CultureNameIsRenderedInHtmlLangAttribute()
-    {
-        PageInformation page = new PageInformation()
-            .SetCulture(new System.Globalization.CultureInfo("fr-FR"));
-        PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
-
-        string html = RenderContent(builder.RenderDocumentStart(new DefaultHttpContext()));
-
-        Assert.That(html, Does.Contain("<html lang=\"fr-FR\">"));
-    }
-
-    [Test]
-    public void RenderDocumentEndAlwaysClosesHtmlTag()
+    public void ViewportMetaIsAutoInjectedWhenAbsent()
     {
         PageInformation page = new PageInformation();
         PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
-        DefaultHttpContext context = new DefaultHttpContext();
 
-        _ = RenderContent(builder.RenderDocumentStart(context));
-        string end = RenderContent(builder.RenderDocumentEnd(context));
+        string html = RenderContent(builder.RenderDocumentStart(new DefaultHttpContext()));
 
-        Assert.That(end, Does.EndWith("</html>"));
+        Assert.That(html, Does.Contain("name=\"viewport\""));
     }
 
     [Test]
-    public void BodyClassDeduplicationPreservesUniqueClasses()
+    public void ViewportMetaIsNotDuplicatedWhenAlreadyPresent()
     {
-        BasicBodyBuilder bodyBuilder = new BasicBodyBuilder();
-        bodyBuilder.BodyClasses.Add("layout");
-        bodyBuilder.BodyClasses.Add("layout");
-        bodyBuilder.BodyClasses.Add("dark");
-        bodyBuilder.BodyClasses.Add("dark");
-
-        PageInformation page = new PageInformation { BodyBuilder = bodyBuilder };
+        PageInformation page = new PageInformation().SetViewport("width=device-width");
         PageBuilder builder = new PageBuilder(TestHtmlHelperFactory.Create(), page);
 
         string html = RenderContent(builder.RenderDocumentStart(new DefaultHttpContext()));
 
-        Assert.That(CountOccurrences(html, "layout"), Is.EqualTo(1));
-        Assert.That(CountOccurrences(html, "dark"), Is.EqualTo(1));
-    }
-
-    private static string RenderContent(IHtmlContent content)
-    {
-        using StringWriter writer = new();
-        content.WriteTo(writer, HtmlEncoder.Default);
-        return writer.ToString();
-    }
-
-    private static int CountOccurrences(string value, string pattern)
-    {
-        int count = 0;
-        int index = 0;
-        while ((index = value.IndexOf(pattern, index, StringComparison.Ordinal)) >= 0)
-        {
-            count++;
-            index += pattern.Length;
-        }
-
-        return count;
-    }
-
-    private sealed class TestCookieConsentComposer : ICookieConsentComposer
-    {
-        public IHtmlContent RenderCookieConsent(IHtmlHelper htmlHelper, PageInformation page, CookieDefinition cookieConsent, HttpContext context)
-        {
-            return new TestCookieConsentHtmlContent();
-        }
-    }
-
-    private sealed class TestCookieConsentHtmlContent : IHtmlContent
-    {
-        public void WriteTo(TextWriter writer, HtmlEncoder encoder)
-        {
-            writer.Write("<aside data-cookie-consent=\"true\"></aside>");
-        }
-
-        public override string ToString()
-        {
-            return "TO_STRING_COOKIE_CONSENT";
-        }
-    }
-
-    private sealed class StatefulBodyBuilder : IBodyBuilder
-    {
-        private TextWriter? _startWriter;
-
-        public void RenderBodyEnd(TextWriter writer, IHtmlHelper html, PageInformation page)
-        {
-            writer.Write("</body>");
-        }
-
-        public void RenderBodyStart(TextWriter writer, IHtmlHelper html, PageInformation page)
-        {
-            writer.Write("<body>");
-        }
-
-        public void RenderFooterEnd(TextWriter writer, IHtmlHelper html, PageInformation page)
-        {
-            writer.Write("</footer>");
-        }
-
-        public void RenderFooterStart(TextWriter writer, IHtmlHelper html, PageInformation page)
-        {
-            writer.Write("<footer>");
-        }
-
-        public void RenderHeaderEnd(TextWriter writer, IHtmlHelper html, PageInformation page)
-        {
-            writer.Write("</header>");
-        }
-
-        public void RenderHeaderStart(TextWriter writer, IHtmlHelper html, PageInformation page)
-        {
-            writer.Write("<header>");
-        }
-
-        public void RenderMainEnd(TextWriter writer, IHtmlHelper html, PageInformation page)
-        {
-            _startWriter?.Write("</section>");
-            writer.Write("</main>");
-        }
-
-        public void RenderMainStart(TextWriter writer, IHtmlHelper html, PageInformation page)
-        {
-            writer.Write("<main>");
-            writer.Write("<section class=\"stateful\">");
-            _startWriter = writer;
-        }
+        Assert.That(CountOccurrences(html, "name=\"viewport\""), Is.EqualTo(1));
     }
 }

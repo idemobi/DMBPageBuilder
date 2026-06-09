@@ -7,7 +7,6 @@
 
 #region
 
-using System.Collections.Generic;
 using NUnit.Framework;
 
 #endregion
@@ -17,6 +16,16 @@ namespace DMBPageBuilderUnitTest;
 internal static class HtmlAttributeSecurityTestCases
 {
     #region Static methods
+
+    internal static IEnumerable<TestCaseData> AttributeValueInjectionAttempts()
+    {
+        yield return new TestCaseData("\" onclick=\"alert(1)<script>alert(2)</script>", "<script>")
+            .SetName("Script value injection is encoded");
+        yield return new TestCaseData("\" style=\"display:none\"><style>body{display:none}</style>", "<style>")
+            .SetName("Css value injection is encoded");
+        yield return new TestCaseData("\" onerror=\"alert(1)\"><img src=x>", "<img")
+            .SetName("Html value injection is encoded");
+    }
 
     internal static IEnumerable<TestCaseData> CommonAttributeNames()
     {
@@ -44,16 +53,6 @@ internal static class HtmlAttributeSecurityTestCases
         yield return new TestCaseData("x>y").SetName("Closing tag injection attribute name is rejected");
         yield return new TestCaseData("x/onload").SetName("Slash injection attribute name is rejected");
         yield return new TestCaseData("x\u0001onload").SetName("Control character injection attribute name is rejected");
-    }
-
-    internal static IEnumerable<TestCaseData> AttributeValueInjectionAttempts()
-    {
-        yield return new TestCaseData("\" onclick=\"alert(1)<script>alert(2)</script>", "<script>")
-            .SetName("Script value injection is encoded");
-        yield return new TestCaseData("\" style=\"display:none\"><style>body{display:none}</style>", "<style>")
-            .SetName("Css value injection is encoded");
-        yield return new TestCaseData("\" onerror=\"alert(1)\"><img src=x>", "<img")
-            .SetName("Html value injection is encoded");
     }
 
     #endregion

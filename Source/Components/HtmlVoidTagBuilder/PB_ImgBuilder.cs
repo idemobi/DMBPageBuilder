@@ -7,8 +7,6 @@
 
 #region
 
-using System;
-using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 #endregion
@@ -41,15 +39,6 @@ namespace DMBPageBuilder
         protected override PB_ImgBuilder CreateInstance()
         {
             return new PB_ImgBuilder(_textWriter, _htmlHelper);
-        }
-
-        /// <inheritdoc />
-        protected override void ValidateAttributeValue(string name, string value)
-        {
-            HtmlUrlAttributeDataPolicy dataPolicy = string.Equals(name, "src", StringComparison.OrdinalIgnoreCase)
-                ? HtmlUrlAttributeDataPolicy.Image
-                : HtmlUrlAttributeDataPolicy.None;
-            HtmlUrlAttributeValidator.Validate(name, value, dataPolicy);
         }
 
         /// <summary>
@@ -100,6 +89,15 @@ namespace DMBPageBuilder
         public PB_ImgBuilder SetWidth(int width)
         {
             return SetAttribute("width", width);
+        }
+
+        /// <inheritdoc />
+        protected override void ValidateAttributeValue(string name, string value)
+        {
+            HtmlUrlAttributeDataPolicy dataPolicy = string.Equals(name, "src", StringComparison.OrdinalIgnoreCase)
+                ? HtmlUrlAttributeDataPolicy.Image
+                : HtmlUrlAttributeDataPolicy.None;
+            HtmlUrlAttributeValidator.Validate(name, value, dataPolicy);
         }
 
         #endregion

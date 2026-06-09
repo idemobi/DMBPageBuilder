@@ -7,8 +7,6 @@
 
 #region
 
-using System;
-using System.Linq;
 using DMBPageBuilder;
 using NUnit.Framework;
 

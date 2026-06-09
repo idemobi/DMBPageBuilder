@@ -7,7 +7,6 @@
 
 #region
 
-using System;
 using DMBBootstrapBuilder;
 using DMBPageBuilder;
 
@@ -48,7 +47,7 @@ public static class DMBPageBuilderLabsNavigationAgent
     /// <summary>
     ///     Creates the DMBPageBuilder navbar menu group.
     /// </summary>
-    /// <returns>The configured <see cref="GroupActionItem"/> containing DMBPageBuilder labs page links.</returns>
+    /// <returns>The configured <see cref="GroupActionItem" /> containing DMBPageBuilder labs page links.</returns>
     public static GroupActionItem CreateMenuGroup()
     {
         return ActionItemFactory.Group("DMBPageBuilder", IconStruct.Bootstrap("bi-file-earmark-code"))
@@ -88,11 +87,37 @@ public static class DMBPageBuilderLabsNavigationAgent
     }
 
     /// <summary>
+    ///     Creates the DMBPageBuilder sidebar component.
+    /// </summary>
+    /// <param name="currentController">The current MVC controller name used to mark the active item.</param>
+    /// <param name="currentAction">The current MVC action name used to mark the active item.</param>
+    /// <param name="sidebarId">The HTML identifier applied to the sidebar component.</param>
+    /// <param name="localStorageKey">The browser local-storage key used for sidebar state.</param>
+    /// <returns>The configured <see cref="SideBarComponent" />.</returns>
+    public static SideBarComponent CreateSidebar(
+        string? currentController,
+        string? currentAction,
+        string sidebarId = "page_builder_sidebar",
+        string localStorageKey = "dmbpagebuilder.labs.sidebar"
+    )
+    {
+        SideBarComponent sidebar = new SideBarComponent()
+            .WithId(sidebarId)
+            .WithLocalStorageKey(localStorageKey)
+            .WithAutoExpandActivePath()
+            .WithRememberExpandedState();
+
+        sidebar.AddSection(CreateSidebarSection(currentController, currentAction));
+
+        return sidebar;
+    }
+
+    /// <summary>
     ///     Creates the DMBPageBuilder sidebar section.
     /// </summary>
     /// <param name="currentController">The current MVC controller name used to mark the active item.</param>
     /// <param name="currentAction">The current MVC action name used to mark the active item.</param>
-    /// <returns>The configured <see cref="SideBarSectionComponent"/>.</returns>
+    /// <returns>The configured <see cref="SideBarSectionComponent" />.</returns>
     public static SideBarSectionComponent CreateSidebarSection(string? currentController, string? currentAction)
     {
         return new SideBarSectionComponent("DMBPageBuilder")
@@ -132,36 +157,10 @@ public static class DMBPageBuilderLabsNavigationAgent
     }
 
     /// <summary>
-    ///     Creates the DMBPageBuilder sidebar component.
-    /// </summary>
-    /// <param name="currentController">The current MVC controller name used to mark the active item.</param>
-    /// <param name="currentAction">The current MVC action name used to mark the active item.</param>
-    /// <param name="sidebarId">The HTML identifier applied to the sidebar component.</param>
-    /// <param name="localStorageKey">The browser local-storage key used for sidebar state.</param>
-    /// <returns>The configured <see cref="SideBarComponent"/>.</returns>
-    public static SideBarComponent CreateSidebar(
-        string? currentController,
-        string? currentAction,
-        string sidebarId = "page_builder_sidebar",
-        string localStorageKey = "dmbpagebuilder.labs.sidebar"
-    )
-    {
-        SideBarComponent sidebar = new SideBarComponent()
-            .WithId(sidebarId)
-            .WithLocalStorageKey(localStorageKey)
-            .WithAutoExpandActivePath()
-            .WithRememberExpandedState();
-
-        sidebar.AddSection(CreateSidebarSection(currentController, currentAction));
-
-        return sidebar;
-    }
-
-    /// <summary>
     ///     Resolves the Bootstrap icon for a DMBPageBuilder labs action.
     /// </summary>
     /// <param name="actionName">The MVC action name to resolve.</param>
-    /// <returns>The icon value represented as an <see cref="IconStruct"/>.</returns>
+    /// <returns>The icon value represented as an <see cref="IconStruct" />.</returns>
     public static IconStruct ResolveActionIcon(string? actionName)
     {
         return actionName switch

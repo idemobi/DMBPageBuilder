@@ -7,8 +7,6 @@
 
 #region
 
-using System;
-using System.IO;
 using DMBPageBuilder;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NUnit.Framework;
@@ -20,6 +18,48 @@ namespace DMBPageBuilderUnitTest;
 [TestFixture]
 public sealed class HtmlStyleDeclarationTests
 {
+    private static PB_SpanBuilder CreateBuilder()
+    {
+        return new PB_SpanBuilder(new StringWriter(), TestHtmlHelperFactory.Create());
+    }
+
+    private sealed class DefensiveStyleBuilder : HtmlTagBuilder<DefensiveStyleBuilder>
+    {
+        #region Instance constructors and destructors
+
+        public DefensiveStyleBuilder(TextWriter writer, IHtmlHelper html)
+            : base(writer, html)
+        {
+            _tag = "span";
+        }
+
+        #endregion
+
+        #region Instance methods
+
+        protected override DefensiveStyleBuilder CreateInstance()
+        {
+            return new DefensiveStyleBuilder(_textWriter, _htmlHelper);
+        }
+
+        public DefensiveStyleBuilder InjectStyle(string key, string value)
+        {
+            _styles[key] = value;
+            return this;
+        }
+
+        #endregion
+    }
+
+    [Test]
+    public void BuildAttributesRejectsInvalidStylesInjectedBySubclasses()
+    {
+        DefensiveStyleBuilder builder = new DefensiveStyleBuilder(new StringWriter(), TestHtmlHelperFactory.Create())
+            .InjectStyle("background", "url(javascript:alert(1))");
+
+        Assert.That(() => builder.BuildAttributes(), Throws.TypeOf<ArgumentException>());
+    }
+
     [TestCase("color", "red", "style=\"color:red;\"")]
     [TestCase("z-index", "10", "style=\"z-index:10;\"")]
     [TestCase("--brand-color", "#0d6efd", "style=\"--brand-color:#0d6efd;\"")]
@@ -39,20 +79,14 @@ public sealed class HtmlStyleDeclarationTests
         Assert.That(builder.BuildAttributes(), Does.Contain(expectedAttribute));
     }
 
-    [TestCase("")]
-    [TestCase(" ")]
-    [TestCase("color;background")]
-    [TestCase("color:background")]
-    [TestCase("color{background}")]
-    [TestCase("color<background")]
-    [TestCase("color/background")]
-    [TestCase("color\"background")]
-    [TestCase("color\u0001background")]
-    public void SetStyleRejectsInvalidCssPropertyNames(string key)
+    [Test]
+    public void SetStyleKeepsImportantFlagForSafeValues()
     {
         PB_SpanBuilder builder = CreateBuilder();
 
-        Assert.That(() => builder.SetStyle(key, "red"), Throws.TypeOf<ArgumentException>());
+        builder.SetStyle("display", "none", important: true);
+
+        Assert.That(builder.BuildAttributes(), Does.Contain("style=\"display:none !important;\""));
     }
 
     [TestCase("red;background:url('/safe.png')")]
@@ -73,47 +107,19 @@ public sealed class HtmlStyleDeclarationTests
         Assert.That(() => builder.SetStyle("background-image", value), Throws.TypeOf<ArgumentException>());
     }
 
-    [Test]
-    public void SetStyleKeepsImportantFlagForSafeValues()
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("color;background")]
+    [TestCase("color:background")]
+    [TestCase("color{background}")]
+    [TestCase("color<background")]
+    [TestCase("color/background")]
+    [TestCase("color\"background")]
+    [TestCase("color\u0001background")]
+    public void SetStyleRejectsInvalidCssPropertyNames(string key)
     {
         PB_SpanBuilder builder = CreateBuilder();
 
-        builder.SetStyle("display", "none", important: true);
-
-        Assert.That(builder.BuildAttributes(), Does.Contain("style=\"display:none !important;\""));
-    }
-
-    [Test]
-    public void BuildAttributesRejectsInvalidStylesInjectedBySubclasses()
-    {
-        DefensiveStyleBuilder builder = new DefensiveStyleBuilder(new StringWriter(), TestHtmlHelperFactory.Create())
-            .InjectStyle("background", "url(javascript:alert(1))");
-
-        Assert.That(() => builder.BuildAttributes(), Throws.TypeOf<ArgumentException>());
-    }
-
-    private static PB_SpanBuilder CreateBuilder()
-    {
-        return new PB_SpanBuilder(new StringWriter(), TestHtmlHelperFactory.Create());
-    }
-
-    private sealed class DefensiveStyleBuilder : HtmlTagBuilder<DefensiveStyleBuilder>
-    {
-        public DefensiveStyleBuilder(TextWriter writer, IHtmlHelper html)
-            : base(writer, html)
-        {
-            _tag = "span";
-        }
-
-        public DefensiveStyleBuilder InjectStyle(string key, string value)
-        {
-            _styles[key] = value;
-            return this;
-        }
-
-        protected override DefensiveStyleBuilder CreateInstance()
-        {
-            return new DefensiveStyleBuilder(_textWriter, _htmlHelper);
-        }
+        Assert.That(() => builder.SetStyle(key, "red"), Throws.TypeOf<ArgumentException>());
     }
 }

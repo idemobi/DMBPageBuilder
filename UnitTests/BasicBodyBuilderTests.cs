@@ -7,7 +7,6 @@
 
 #region
 
-using System;
 using DMBPageBuilder;
 using NUnit.Framework;
 
@@ -27,51 +26,20 @@ public sealed class BasicBodyBuilderTests
         Assert.That(builder.RenderBodyAttributes(), Does.Contain(expectedAttribute));
     }
 
-    [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.CommonAttributeNames))]
-    public void RenderMainAttributesAcceptsCommonHtmlAttributeNames(string attributeName, string expectedAttribute)
+    [Test]
+    public void RenderBodyAttributesEncodesClasses()
     {
         BasicBodyBuilder builder = new BasicBodyBuilder();
-        builder.MainAttributes[attributeName] = "safe-value";
+        builder.BodyClasses.Add("layout");
+        builder.BodyClasses.Add("\" onclick=\"alert(1)<script>alert(2)</script>");
 
-        Assert.That(builder.RenderMainAttributes(), Does.Contain(expectedAttribute));
-    }
+        string attributes = builder.RenderBodyAttributes();
 
-    [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.InvalidAttributeNames))]
-    public void RenderBodyAttributesRejectsNamesThatCanBreakHtmlAttributeGrammar(string maliciousAttributeName)
-    {
-        BasicBodyBuilder builder = new BasicBodyBuilder();
-        builder.BodyAttributes[maliciousAttributeName] = "safe-value";
-
-        Assert.That(() => builder.RenderBodyAttributes(), Throws.TypeOf<ArgumentException>());
-    }
-
-    [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.InvalidAttributeNames))]
-    public void RenderMainAttributesRejectsNamesThatCanBreakHtmlAttributeGrammar(string maliciousAttributeName)
-    {
-        BasicBodyBuilder builder = new BasicBodyBuilder();
-        builder.MainAttributes[maliciousAttributeName] = "safe-value";
-
-        Assert.That(() => builder.RenderMainAttributes(), Throws.TypeOf<ArgumentException>());
-    }
-
-    [TestCase("class")]
-    [TestCase("style")]
-    public void RenderBodyAttributesRejectsReservedRawAttributes(string attributeName)
-    {
-        BasicBodyBuilder builder = new BasicBodyBuilder();
-        builder.BodyAttributes[attributeName] = "safe-value";
-
-        Assert.That(() => builder.RenderBodyAttributes(), Throws.TypeOf<InvalidOperationException>());
-    }
-
-    [TestCase("class")]
-    [TestCase("style")]
-    public void RenderMainAttributesRejectsReservedRawAttributes(string attributeName)
-    {
-        BasicBodyBuilder builder = new BasicBodyBuilder();
-        builder.MainAttributes[attributeName] = "safe-value";
-
-        Assert.That(() => builder.RenderMainAttributes(), Throws.TypeOf<InvalidOperationException>());
+        Assert.Multiple(() =>
+        {
+            Assert.That(attributes, Does.Contain("class=\"layout &quot; onclick=&quot;alert(1)&lt;script&gt;alert(2)&lt;/script&gt;\""));
+            Assert.That(attributes, Does.Not.Contain("<script>"));
+        });
     }
 
     [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.AttributeValueInjectionAttempts))]
@@ -89,35 +57,43 @@ public sealed class BasicBodyBuilderTests
         });
     }
 
-    [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.AttributeValueInjectionAttempts))]
-    public void RenderMainAttributesEncodesPotentiallyDangerousValues(string payload, string forbiddenRawMarkup)
+    [TestCase("href")]
+    [TestCase("src")]
+    [TestCase("action")]
+    public void RenderBodyAttributesRejectsDangerousUrlAttributeValues(string attributeName)
     {
         BasicBodyBuilder builder = new BasicBodyBuilder();
-        builder.MainAttributes["title"] = payload;
+        builder.BodyAttributes[attributeName] = "javascript:alert(1)";
 
-        string attributes = builder.RenderMainAttributes();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(attributes, Does.Contain("title=\""));
-            Assert.That(attributes, Does.Not.Contain(forbiddenRawMarkup));
-        });
+        Assert.That(() => builder.RenderBodyAttributes(), Throws.TypeOf<ArgumentException>());
     }
 
-    [Test]
-    public void RenderBodyAttributesEncodesClasses()
+    [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.InvalidAttributeNames))]
+    public void RenderBodyAttributesRejectsNamesThatCanBreakHtmlAttributeGrammar(string maliciousAttributeName)
     {
         BasicBodyBuilder builder = new BasicBodyBuilder();
-        builder.BodyClasses.Add("layout");
-        builder.BodyClasses.Add("\" onclick=\"alert(1)<script>alert(2)</script>");
+        builder.BodyAttributes[maliciousAttributeName] = "safe-value";
 
-        string attributes = builder.RenderBodyAttributes();
+        Assert.That(() => builder.RenderBodyAttributes(), Throws.TypeOf<ArgumentException>());
+    }
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(attributes, Does.Contain("class=\"layout &quot; onclick=&quot;alert(1)&lt;script&gt;alert(2)&lt;/script&gt;\""));
-            Assert.That(attributes, Does.Not.Contain("<script>"));
-        });
+    [TestCase("class")]
+    [TestCase("style")]
+    public void RenderBodyAttributesRejectsReservedRawAttributes(string attributeName)
+    {
+        BasicBodyBuilder builder = new BasicBodyBuilder();
+        builder.BodyAttributes[attributeName] = "safe-value";
+
+        Assert.That(() => builder.RenderBodyAttributes(), Throws.TypeOf<InvalidOperationException>());
+    }
+
+    [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.CommonAttributeNames))]
+    public void RenderMainAttributesAcceptsCommonHtmlAttributeNames(string attributeName, string expectedAttribute)
+    {
+        BasicBodyBuilder builder = new BasicBodyBuilder();
+        builder.MainAttributes[attributeName] = "safe-value";
+
+        Assert.That(builder.RenderMainAttributes(), Does.Contain(expectedAttribute));
     }
 
     [Test]
@@ -136,15 +112,19 @@ public sealed class BasicBodyBuilderTests
         });
     }
 
-    [TestCase("href")]
-    [TestCase("src")]
-    [TestCase("action")]
-    public void RenderBodyAttributesRejectsDangerousUrlAttributeValues(string attributeName)
+    [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.AttributeValueInjectionAttempts))]
+    public void RenderMainAttributesEncodesPotentiallyDangerousValues(string payload, string forbiddenRawMarkup)
     {
         BasicBodyBuilder builder = new BasicBodyBuilder();
-        builder.BodyAttributes[attributeName] = "javascript:alert(1)";
+        builder.MainAttributes["title"] = payload;
 
-        Assert.That(() => builder.RenderBodyAttributes(), Throws.TypeOf<ArgumentException>());
+        string attributes = builder.RenderMainAttributes();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(attributes, Does.Contain("title=\""));
+            Assert.That(attributes, Does.Not.Contain(forbiddenRawMarkup));
+        });
     }
 
     [TestCase("href")]
@@ -156,5 +136,24 @@ public sealed class BasicBodyBuilderTests
         builder.MainAttributes[attributeName] = "javascript:alert(1)";
 
         Assert.That(() => builder.RenderMainAttributes(), Throws.TypeOf<ArgumentException>());
+    }
+
+    [TestCaseSource(typeof(HtmlAttributeSecurityTestCases), nameof(HtmlAttributeSecurityTestCases.InvalidAttributeNames))]
+    public void RenderMainAttributesRejectsNamesThatCanBreakHtmlAttributeGrammar(string maliciousAttributeName)
+    {
+        BasicBodyBuilder builder = new BasicBodyBuilder();
+        builder.MainAttributes[maliciousAttributeName] = "safe-value";
+
+        Assert.That(() => builder.RenderMainAttributes(), Throws.TypeOf<ArgumentException>());
+    }
+
+    [TestCase("class")]
+    [TestCase("style")]
+    public void RenderMainAttributesRejectsReservedRawAttributes(string attributeName)
+    {
+        BasicBodyBuilder builder = new BasicBodyBuilder();
+        builder.MainAttributes[attributeName] = "safe-value";
+
+        Assert.That(() => builder.RenderMainAttributes(), Throws.TypeOf<InvalidOperationException>());
     }
 }

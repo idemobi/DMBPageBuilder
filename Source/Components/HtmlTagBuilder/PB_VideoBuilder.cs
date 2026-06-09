@@ -7,8 +7,6 @@
 
 #region
 
-using System;
-using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 #endregion
@@ -39,17 +37,6 @@ namespace DMBPageBuilder
 
         /// <inheritdoc />
         protected override PB_VideoBuilder CreateInstance() => new(_textWriter, _htmlHelper);
-
-        /// <inheritdoc />
-        protected override void ValidateAttributeValue(string name, string value)
-        {
-            HtmlUrlAttributeDataPolicy dataPolicy = string.Equals(name, "src", StringComparison.OrdinalIgnoreCase)
-                ? HtmlUrlAttributeDataPolicy.Video
-                : string.Equals(name, "poster", StringComparison.OrdinalIgnoreCase)
-                    ? HtmlUrlAttributeDataPolicy.Image
-                    : HtmlUrlAttributeDataPolicy.None;
-            HtmlUrlAttributeValidator.Validate(name, value, dataPolicy);
-        }
 
         /// <summary>
         ///     Sets the HTML <c>autoplay</c> attribute.
@@ -106,6 +93,17 @@ namespace DMBPageBuilder
         /// <param name="width">The value to assign to the HTML <c>width</c> attribute.</param>
         /// <returns>The current <see cref="PB_VideoBuilder" /> instance for chaining.</returns>
         public PB_VideoBuilder SetWidth(int width) => SetAttribute("width", width);
+
+        /// <inheritdoc />
+        protected override void ValidateAttributeValue(string name, string value)
+        {
+            HtmlUrlAttributeDataPolicy dataPolicy = string.Equals(name, "src", StringComparison.OrdinalIgnoreCase)
+                ? HtmlUrlAttributeDataPolicy.Video
+                : string.Equals(name, "poster", StringComparison.OrdinalIgnoreCase)
+                    ? HtmlUrlAttributeDataPolicy.Image
+                    : HtmlUrlAttributeDataPolicy.None;
+            HtmlUrlAttributeValidator.Validate(name, value, dataPolicy);
+        }
 
         #endregion
     }

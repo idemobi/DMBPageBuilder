@@ -7,8 +7,6 @@
 
 #region
 
-using System;
-using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 #endregion
@@ -39,16 +37,6 @@ namespace DMBPageBuilder
 
         /// <inheritdoc />
         protected override PB_SourceBuilder CreateInstance() => new(_textWriter, _htmlHelper);
-
-        /// <inheritdoc />
-        protected override void ValidateAttributeValue(string name, string value)
-        {
-            HtmlUrlAttributeDataPolicy dataPolicy = string.Equals(name, "src", StringComparison.OrdinalIgnoreCase) ||
-                                                    string.Equals(name, "srcset", StringComparison.OrdinalIgnoreCase)
-                ? HtmlUrlAttributeDataPolicy.Media
-                : HtmlUrlAttributeDataPolicy.None;
-            HtmlUrlAttributeValidator.Validate(name, value, dataPolicy);
-        }
 
         /// <summary>
         ///     Sets the HTML <c>media</c> attribute.
@@ -84,6 +72,16 @@ namespace DMBPageBuilder
         /// <param name="type">The value to assign to the HTML <c>type</c> attribute.</param>
         /// <returns>The current <see cref="PB_SourceBuilder" /> instance for chaining.</returns>
         public PB_SourceBuilder SetType(string type) => SetAttribute("type", type);
+
+        /// <inheritdoc />
+        protected override void ValidateAttributeValue(string name, string value)
+        {
+            HtmlUrlAttributeDataPolicy dataPolicy = string.Equals(name, "src", StringComparison.OrdinalIgnoreCase) ||
+                                                    string.Equals(name, "srcset", StringComparison.OrdinalIgnoreCase)
+                ? HtmlUrlAttributeDataPolicy.Media
+                : HtmlUrlAttributeDataPolicy.None;
+            HtmlUrlAttributeValidator.Validate(name, value, dataPolicy);
+        }
 
         #endregion
     }

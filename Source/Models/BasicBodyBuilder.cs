@@ -7,10 +7,6 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -27,6 +23,21 @@ namespace DMBPageBuilder
     /// </remarks>
     public class BasicBodyBuilder : IBodyBuilder
     {
+        #region Static methods
+
+        private static void AddRawAttributes(List<string> attributes, Dictionary<string, string> rawAttributes)
+        {
+            foreach ((string key, string value) in rawAttributes)
+            {
+                HtmlAttributeNameValidator.Validate(key);
+                HtmlReservedAttributeValidator.EnsureCanSetGenericAttribute(key);
+                HtmlUrlAttributeValidator.Validate(key, value);
+                attributes.Add($@"{key}=""{HtmlEncoder.Default.Encode(value)}""");
+            }
+        }
+
+        #endregion
+
         #region Instance fields and properties
 
         /// <summary>
@@ -51,21 +62,6 @@ namespace DMBPageBuilder
 
         #endregion
 
-        #region Static methods
-
-        private static void AddRawAttributes(List<string> attributes, Dictionary<string, string> rawAttributes)
-        {
-            foreach ((string key, string value) in rawAttributes)
-            {
-                HtmlAttributeNameValidator.Validate(key);
-                HtmlReservedAttributeValidator.EnsureCanSetGenericAttribute(key);
-                HtmlUrlAttributeValidator.Validate(key, value);
-                attributes.Add($@"{key}=""{HtmlEncoder.Default.Encode(value)}""");
-            }
-        }
-
-        #endregion
-
         #region Instance methods
 
         /// <summary>
@@ -73,7 +69,10 @@ namespace DMBPageBuilder
         /// </summary>
         /// <returns>The leading-space-prefixed attribute string, or an empty string when no body attributes exist.</returns>
         /// <exception cref="ArgumentException">Thrown when an attribute name or URL attribute value is invalid.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when raw attributes include reserved <c>class</c> or <c>style</c> attributes.</exception>
+        /// <exception cref="InvalidOperationException">
+        ///     Thrown when raw attributes include reserved <c>class</c> or <c>style</c>
+        ///     attributes.
+        /// </exception>
         public string RenderBodyAttributes()
         {
             List<string> attrs = new();
@@ -93,7 +92,10 @@ namespace DMBPageBuilder
         /// </summary>
         /// <returns>The leading-space-prefixed attribute string, or an empty string when no main attributes exist.</returns>
         /// <exception cref="ArgumentException">Thrown when an attribute name or URL attribute value is invalid.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when raw attributes include reserved <c>class</c> or <c>style</c> attributes.</exception>
+        /// <exception cref="InvalidOperationException">
+        ///     Thrown when raw attributes include reserved <c>class</c> or <c>style</c>
+        ///     attributes.
+        /// </exception>
         public string RenderMainAttributes()
         {
             List<string> attrs = new();

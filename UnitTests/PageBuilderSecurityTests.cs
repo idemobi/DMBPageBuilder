@@ -7,8 +7,6 @@
 
 #region
 
-using System;
-using System.IO;
 using System.Text.Encodings.Web;
 using DMBPageBuilder;
 using Microsoft.AspNetCore.Html;
@@ -50,129 +48,41 @@ public sealed class PageBuilderSecurityTests
         return writer.ToString();
     }
 
-    // ── Constructor guards ────────────────────────────────────────────────
-
     [Test]
-    public void PageBuilderThrowsArgumentNullExceptionWhenHtmlHelperIsNull()
-    {
-        Assert.That(() => new PageBuilder(null!, new PageInformation()), Throws.TypeOf<ArgumentNullException>());
-    }
-
-    [Test]
-    public void PageBuilderThrowsArgumentNullExceptionWhenPageInformationIsNull()
-    {
-        Assert.That(() => new PageBuilder(TestHtmlHelperFactory.Create(), null!), Throws.TypeOf<ArgumentNullException>());
-    }
-
-    // ── Title encoding ────────────────────────────────────────────────────
-
-    [Test]
-    public void TitleXssPayloadIsHtmlEncoded()
+    public void EmptyAndWhitespaceKeywordsAreFilteredOut()
     {
         PageInformation page = new PageInformation()
-            .SetTitle("<script>alert(1)</script>");
+            .SetKeywords("valid", "", "   ", "also-valid");
 
         string html = RenderStart(page);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(html, Does.Contain("<title>&lt;script&gt;alert(1)&lt;/script&gt;</title>"));
-            Assert.That(html, Does.Not.Contain("<title><script>"));
-        });
+        Assert.That(html, Does.Contain("content=\"valid, also-valid\""));
     }
 
+    // ── Inline content is NOT encoded (trusted by design) ─────────────────
+
     [Test]
-    public void TitleWithQuoteBreakoutIsEncoded()
+    public void InlineScriptContentIsWrittenRawAndNotDoubleEncoded()
     {
+        const string trustedScript = "window.config = { url: '/api', flag: true };";
         PageInformation page = new PageInformation()
-            .SetTitle("\" onload=\"alert(1)\" x=\"");
+            .AddScriptInline("config", trustedScript, PageScriptLocation.Head);
 
         string html = RenderStart(page);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(html, Does.Contain("<title>&quot; onload=&quot;alert(1)&quot; x=&quot;</title>"));
-            Assert.That(html, Does.Not.Contain("<title>\" onload="));
-        });
+        Assert.That(html, Does.Contain($"<script>{trustedScript}</script>"));
     }
 
     [Test]
-    public void TitleWithAmpersandIsHtmlEncoded()
+    public void InlineStyleContentIsWrittenRawAndNotDoubleEncoded()
     {
+        const string trustedCss = "body { color: #333; background: url('/img/bg.png'); }";
         PageInformation page = new PageInformation()
-            .SetTitle("Sales & Marketing <2025>");
+            .AddStyleSheetInline("theme", trustedCss);
 
         string html = RenderStart(page);
 
-        Assert.That(html, Does.Contain("<title>Sales &amp; Marketing &lt;2025&gt;</title>"));
-    }
-
-    [Test]
-    public void NullTitleOmitsTitleTag()
-    {
-        PageInformation page = new PageInformation();
-
-        string html = RenderStart(page);
-
-        Assert.That(html, Does.Not.Contain("<title>"));
-    }
-
-    // ── Meta encoding ─────────────────────────────────────────────────────
-
-    [Test]
-    public void MetaNameXssPayloadIsEncoded()
-    {
-        PageInformation page = new PageInformation()
-            .AddMeta(PageMetaDefinition.NameMeta("<img src=x onerror=alert(1)>", "safe-content"));
-
-        string html = RenderStart(page);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(html, Does.Contain("name=\"&lt;img src=x onerror=alert(1)&gt;\""));
-            Assert.That(html, Does.Not.Contain("name=\"<img"));
-        });
-    }
-
-    [Test]
-    public void MetaContentXssPayloadIsEncoded()
-    {
-        PageInformation page = new PageInformation()
-            .AddMeta(PageMetaDefinition.NameMeta("description", "\"><script>alert(1)</script>"));
-
-        string html = RenderStart(page);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(html, Does.Contain("content=\"&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;\""));
-            Assert.That(html, Does.Not.Contain("content=\"\"><script>"));
-        });
-    }
-
-    [Test]
-    public void MetaPropertyXssPayloadIsEncoded()
-    {
-        PageInformation page = new PageInformation()
-            .AddMeta(PageMetaDefinition.PropertyMeta("og:title\"><script>alert(1)</script>", "value"));
-
-        string html = RenderStart(page);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(html, Does.Contain("property=\"og:title&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;\""));
-            Assert.That(html, Does.Not.Contain("<script>alert(1)</script>"));
-        });
-    }
-
-    [Test]
-    public void MetaHttpEquivXssPayloadIsEncoded()
-    {
-        PageInformation page = new PageInformation()
-            .AddMeta(PageMetaDefinition.HttpEquivMeta("refresh\"><script>alert(1)</script>", "0"));
-
-        string html = RenderStart(page);
-
-        Assert.That(html, Does.Not.Contain("<script>alert(1)</script>"));
+        Assert.That(html, Does.Contain($"<style>{trustedCss}</style>"));
     }
 
     // ── Keywords encoding ─────────────────────────────────────────────────
@@ -190,68 +100,6 @@ public sealed class PageBuilderSecurityTests
             Assert.That(html, Does.Contain("normal"));
             Assert.That(html, Does.Not.Contain("<script>alert(1)</script>"));
             Assert.That(html, Does.Not.Contain("\"injected\""));
-        });
-    }
-
-    [Test]
-    public void EmptyAndWhitespaceKeywordsAreFilteredOut()
-    {
-        PageInformation page = new PageInformation()
-            .SetKeywords("valid", "", "   ", "also-valid");
-
-        string html = RenderStart(page);
-
-        Assert.That(html, Does.Contain("content=\"valid, also-valid\""));
-    }
-
-    // ── Script src encoding ───────────────────────────────────────────────
-
-    [Test]
-    public void ScriptSrcXssPayloadIsEncoded()
-    {
-        PageInformation page = new PageInformation()
-            .SetScriptFile("\"><script>alert(1)</script>", PageScriptLocation.Head);
-
-        string html = RenderStart(page);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(html, Does.Contain("src=\"&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;\""));
-            Assert.That(html, Does.Not.Contain("src=\"\"><script>"));
-        });
-    }
-
-    [Test]
-    public void ScriptIntegrityXssPayloadIsEncoded()
-    {
-        PageInformation page = new PageInformation()
-            .SetScriptFile(
-                "/app.js",
-                PageScriptLocation.Head,
-                integrity: "\"><script>alert(1)</script>"
-            );
-
-        string html = RenderStart(page);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(html, Does.Contain("integrity=\"&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;\""));
-            Assert.That(html, Does.Not.Contain("integrity=\"\"><script>"));
-        });
-    }
-
-    [Test]
-    public void ScriptEndOfBodySrcXssPayloadIsEncoded()
-    {
-        PageInformation page = new PageInformation()
-            .SetScriptFile("\"><script>alert(1)</script>", PageScriptLocation.EndOfBody);
-
-        string html = RenderEnd(page);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(html, Does.Contain("src=\"&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;\""));
-            Assert.That(html, Does.Not.Contain("src=\"\"><script>"));
         });
     }
 
@@ -288,6 +136,22 @@ public sealed class PageBuilderSecurityTests
     }
 
     [Test]
+    public void LinkSizesXssPayloadIsEncoded()
+    {
+        PageInformation page = new PageInformation()
+            .AddLink(new PageLinkDefinition
+            {
+                Rel = PageLinkRel.AppleTouchIcon,
+                Href = "/icon.png",
+                Sizes = "180x180\"><script>alert(1)</script>"
+            });
+
+        string html = RenderStart(page);
+
+        Assert.That(html, Does.Not.Contain("<script>alert(1)</script>"));
+    }
+
+    [Test]
     public void LinkTypeXssPayloadIsEncoded()
     {
         PageInformation page = new PageInformation()
@@ -304,19 +168,100 @@ public sealed class PageBuilderSecurityTests
     }
 
     [Test]
-    public void LinkSizesXssPayloadIsEncoded()
+    public void MetaContentXssPayloadIsEncoded()
     {
         PageInformation page = new PageInformation()
-            .AddLink(new PageLinkDefinition
-            {
-                Rel = PageLinkRel.AppleTouchIcon,
-                Href = "/icon.png",
-                Sizes = "180x180\"><script>alert(1)</script>"
-            });
+            .AddMeta(PageMetaDefinition.NameMeta("description", "\"><script>alert(1)</script>"));
+
+        string html = RenderStart(page);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(html, Does.Contain("content=\"&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;\""));
+            Assert.That(html, Does.Not.Contain("content=\"\"><script>"));
+        });
+    }
+
+    [Test]
+    public void MetaHttpEquivXssPayloadIsEncoded()
+    {
+        PageInformation page = new PageInformation()
+            .AddMeta(PageMetaDefinition.HttpEquivMeta("refresh\"><script>alert(1)</script>", "0"));
 
         string html = RenderStart(page);
 
         Assert.That(html, Does.Not.Contain("<script>alert(1)</script>"));
+    }
+
+    // ── Meta encoding ─────────────────────────────────────────────────────
+
+    [Test]
+    public void MetaNameXssPayloadIsEncoded()
+    {
+        PageInformation page = new PageInformation()
+            .AddMeta(PageMetaDefinition.NameMeta("<img src=x onerror=alert(1)>", "safe-content"));
+
+        string html = RenderStart(page);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(html, Does.Contain("name=\"&lt;img src=x onerror=alert(1)&gt;\""));
+            Assert.That(html, Does.Not.Contain("name=\"<img"));
+        });
+    }
+
+    [Test]
+    public void MetaPropertyXssPayloadIsEncoded()
+    {
+        PageInformation page = new PageInformation()
+            .AddMeta(PageMetaDefinition.PropertyMeta("og:title\"><script>alert(1)</script>", "value"));
+
+        string html = RenderStart(page);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(html, Does.Contain("property=\"og:title&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;\""));
+            Assert.That(html, Does.Not.Contain("<script>alert(1)</script>"));
+        });
+    }
+
+    [Test]
+    public void NullTitleOmitsTitleTag()
+    {
+        PageInformation page = new PageInformation();
+
+        string html = RenderStart(page);
+
+        Assert.That(html, Does.Not.Contain("<title>"));
+    }
+
+    // ── Constructor guards ────────────────────────────────────────────────
+
+    [Test]
+    public void PageBuilderThrowsArgumentNullExceptionWhenHtmlHelperIsNull()
+    {
+        Assert.That(() => new PageBuilder(null!, new PageInformation()), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void PageBuilderThrowsArgumentNullExceptionWhenPageInformationIsNull()
+    {
+        Assert.That(() => new PageBuilder(TestHtmlHelperFactory.Create(), null!), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void ScriptEndOfBodySrcXssPayloadIsEncoded()
+    {
+        PageInformation page = new PageInformation()
+            .SetScriptFile("\"><script>alert(1)</script>", PageScriptLocation.EndOfBody);
+
+        string html = RenderEnd(page);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(html, Does.Contain("src=\"&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;\""));
+            Assert.That(html, Does.Not.Contain("src=\"\"><script>"));
+        });
     }
 
     // ── Comment name injection ────────────────────────────────────────────
@@ -337,6 +282,42 @@ public sealed class PageBuilderSecurityTests
     }
 
     [Test]
+    public void ScriptIntegrityXssPayloadIsEncoded()
+    {
+        PageInformation page = new PageInformation()
+            .SetScriptFile(
+                "/app.js",
+                PageScriptLocation.Head,
+                integrity: "\"><script>alert(1)</script>"
+            );
+
+        string html = RenderStart(page);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(html, Does.Contain("integrity=\"&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;\""));
+            Assert.That(html, Does.Not.Contain("integrity=\"\"><script>"));
+        });
+    }
+
+    // ── Script src encoding ───────────────────────────────────────────────
+
+    [Test]
+    public void ScriptSrcXssPayloadIsEncoded()
+    {
+        PageInformation page = new PageInformation()
+            .SetScriptFile("\"><script>alert(1)</script>", PageScriptLocation.Head);
+
+        string html = RenderStart(page);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(html, Does.Contain("src=\"&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;\""));
+            Assert.That(html, Does.Not.Contain("src=\"\"><script>"));
+        });
+    }
+
+    [Test]
     public void StyleSheetInlineCommentClosingSequenceIsNeutralized()
     {
         PageInformation page = new PageInformation()
@@ -351,29 +332,46 @@ public sealed class PageBuilderSecurityTests
         });
     }
 
-    // ── Inline content is NOT encoded (trusted by design) ─────────────────
-
     [Test]
-    public void InlineScriptContentIsWrittenRawAndNotDoubleEncoded()
+    public void TitleWithAmpersandIsHtmlEncoded()
     {
-        const string trustedScript = "window.config = { url: '/api', flag: true };";
         PageInformation page = new PageInformation()
-            .AddScriptInline("config", trustedScript, PageScriptLocation.Head);
+            .SetTitle("Sales & Marketing <2025>");
 
         string html = RenderStart(page);
 
-        Assert.That(html, Does.Contain($"<script>{trustedScript}</script>"));
+        Assert.That(html, Does.Contain("<title>Sales &amp; Marketing &lt;2025&gt;</title>"));
     }
 
     [Test]
-    public void InlineStyleContentIsWrittenRawAndNotDoubleEncoded()
+    public void TitleWithQuoteBreakoutIsEncoded()
     {
-        const string trustedCss = "body { color: #333; background: url('/img/bg.png'); }";
         PageInformation page = new PageInformation()
-            .AddStyleSheetInline("theme", trustedCss);
+            .SetTitle("\" onload=\"alert(1)\" x=\"");
 
         string html = RenderStart(page);
 
-        Assert.That(html, Does.Contain($"<style>{trustedCss}</style>"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(html, Does.Contain("<title>&quot; onload=&quot;alert(1)&quot; x=&quot;</title>"));
+            Assert.That(html, Does.Not.Contain("<title>\" onload="));
+        });
+    }
+
+    // ── Title encoding ────────────────────────────────────────────────────
+
+    [Test]
+    public void TitleXssPayloadIsHtmlEncoded()
+    {
+        PageInformation page = new PageInformation()
+            .SetTitle("<script>alert(1)</script>");
+
+        string html = RenderStart(page);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(html, Does.Contain("<title>&lt;script&gt;alert(1)&lt;/script&gt;</title>"));
+            Assert.That(html, Does.Not.Contain("<title><script>"));
+        });
     }
 }
