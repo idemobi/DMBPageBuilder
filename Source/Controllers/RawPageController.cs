@@ -7,12 +7,12 @@
 
 #region
 
-using DMBServerWebHelper.Controllers;
+using DMBServerWebHelper;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 #endregion
 
-namespace DMBPageBuilder.Controllers
+namespace DMBPageBuilder
 {
     /// <summary>
     ///     Provides a PageBuilder-aware MVC controller base class.
