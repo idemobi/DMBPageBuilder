@@ -68,6 +68,11 @@ namespace DMBPageBuilder
 
             foreach (WebAssetRegistryEntry entry in registry.Snapshot())
             {
+                if (entry.IsLink && entry.Link != null)
+                {
+                    Page.AddLink(WebAssetRegistry.CopyLink(entry.Link));
+                }
+
                 if (entry.IsScript && !string.IsNullOrWhiteSpace(entry.ScriptUrl))
                 {
                     Page.SetScriptFile(entry.ScriptUrl, entry.ScriptLocation, entry.ScriptLoadingMode, entry.Order, entry.CrossOrigin, entry.Integrity);

@@ -47,7 +47,7 @@ When copying this file to another PageBuilder ecosystem project, update this sec
   - Utility helpers for HTML identifiers, rendering context, and region-related behavior.
 
 - `Source/WebAssets/`
-  - Global web asset registry for scripts and stylesheets shared across rendered pages.
+  - Global web asset registry for links, scripts, and stylesheets shared across rendered pages.
 
 - `Source/wwwroot/`
   - Embedded static assets (`css`, `js`) served through package static-file configuration.

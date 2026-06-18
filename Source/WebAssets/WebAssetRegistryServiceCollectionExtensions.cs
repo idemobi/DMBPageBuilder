@@ -40,12 +40,40 @@ public static class WebAssetRegistryServiceCollectionExtensions
 
         if (existing?.ImplementationInstance is WebAssetRegistry existingRegistry)
         {
+            AddLinkRegistryDescriptor(services, existingRegistry);
             return existingRegistry;
         }
 
         var registry = new WebAssetRegistry();
         services.AddSingleton<IWebAssetRegistry>(registry);
+        AddLinkRegistryDescriptor(services, registry);
         return registry;
+    }
+
+    private static void AddLinkRegistryDescriptor(IServiceCollection services, WebAssetRegistry registry)
+    {
+        bool hasLinkRegistry = services.Any(descriptor => descriptor.ServiceType == typeof(IWebLinkAssetRegistry));
+        if (!hasLinkRegistry)
+        {
+            services.AddSingleton<IWebLinkAssetRegistry>(registry);
+        }
+    }
+
+    /// <summary>
+    ///     Registers one global link asset in <see cref="IWebAssetRegistry" />.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="key">A unique key for deduplication.</param>
+    /// <param name="link">The link definition to copy into the registry.</param>
+    /// <returns>The same <see cref="IServiceCollection" /> instance for chaining.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services" /> or <paramref name="link" /> is <see langword="null" />.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="key" /> or <see cref="PageLinkDefinition.Href" /> is empty or unsafe.</exception>
+    public static IServiceCollection RegisterGlobalLinkAsset(this IServiceCollection services, string key, PageLinkDefinition link)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        WebAssetRegistry registry = GetOrCreateRegistry(services);
+        registry.RegisterLink(key, link);
+        return services;
     }
 
     /// <summary>

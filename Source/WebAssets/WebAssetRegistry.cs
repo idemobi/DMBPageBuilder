@@ -17,14 +17,34 @@ namespace DMBPageBuilder;
 ///     Stores application-level web assets that are automatically injected into page rendering.
 /// </summary>
 /// <remarks>
-///     The registry is intended for assets that should be available to every PageBuilder page, such as shared scripts
-///     and stylesheets registered during application startup.
+///     The registry is intended for assets that should be available to every PageBuilder page, such as shared links,
+///     scripts, and stylesheets registered during application startup.
 /// </remarks>
-public sealed class WebAssetRegistry : IWebAssetRegistry
+public sealed class WebAssetRegistry : IWebLinkAssetRegistry
 {
     #region Instance fields and properties
 
     private readonly ConcurrentDictionary<string, WebAssetRegistryEntry> _entries = new(StringComparer.OrdinalIgnoreCase);
+
+    #endregion
+
+    #region Static methods
+
+    internal static PageLinkDefinition CopyLink(PageLinkDefinition link)
+    {
+        ArgumentNullException.ThrowIfNull(link);
+        return new PageLinkDefinition
+        {
+            As = link.As,
+            CrossOrigin = link.CrossOrigin,
+            Href = link.Href,
+            Integrity = link.Integrity,
+            Order = link.Order,
+            Rel = link.Rel,
+            Sizes = link.Sizes,
+            Type = link.Type
+        };
+    }
 
     #endregion
 
@@ -72,6 +92,32 @@ public sealed class WebAssetRegistry : IWebAssetRegistry
             Order = order,
             CrossOrigin = crossOrigin,
             Integrity = integrity
+        };
+    }
+
+    /// <summary>
+    ///     Registers or replaces a global link asset by key.
+    /// </summary>
+    /// <param name="key">A unique key for deduplication.</param>
+    /// <param name="link">The link definition to copy into the registry.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="link" /> is <see langword="null" />.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="key" /> or <see cref="PageLinkDefinition.Href" /> is empty or unsafe.</exception>
+    public void RegisterLink(string key, PageLinkDefinition link)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(key));
+        }
+
+        ArgumentNullException.ThrowIfNull(link);
+        HtmlAssetUrlValidator.ValidateRequiredUrl("href", link.Href);
+
+        PageLinkDefinition linkCopy = CopyLink(link);
+        _entries[key] = new WebAssetRegistryEntry
+        {
+            Key = key,
+            Link = linkCopy,
+            Order = linkCopy.Order
         };
     }
 

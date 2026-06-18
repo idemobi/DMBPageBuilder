@@ -25,6 +25,11 @@ public sealed class WebAssetRegistryEntry
     public string? Integrity { get; set; }
 
     /// <summary>
+    ///     Gets whether this entry is a link entry.
+    /// </summary>
+    public bool IsLink => Link != null;
+
+    /// <summary>
     ///     Gets whether this entry is a script entry.
     /// </summary>
     public bool IsScript => !string.IsNullOrWhiteSpace(ScriptUrl);
@@ -38,6 +43,11 @@ public sealed class WebAssetRegistryEntry
     ///     Gets or sets a unique key used for deduplication.
     /// </summary>
     public required string Key { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the link definition when the entry represents a global <c>link</c> asset.
+    /// </summary>
+    public PageLinkDefinition? Link { get; set; }
 
     /// <summary>
     ///     Gets or sets the asset order.

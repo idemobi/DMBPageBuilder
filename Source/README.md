@@ -34,7 +34,7 @@ When copying this file to another PageBuilder ecosystem project, update this sec
 - `HtmlHelpers/`: Razor helper extensions that expose PageBuilder components and utility output.
 - `Controllers/`: base controller support for initializing and publishing page information during MVC requests.
 - `Registers/`: request-scoped page information storage and retrieval.
-- `WebAssets/`: global web asset registry for scripts and stylesheets shared across rendered pages.
+- `WebAssets/`: global web asset registry for links, scripts, and stylesheets shared across rendered pages.
 - `Facades/`: public contracts used by builders, action items, style composers, and page-level integrations.
 - `Models/`: page model, metadata definitions, script/style definitions, body rendering contracts, page rendering entry points, shared enums, and value objects used by rendering, icon, style, and action APIs.
 - `Tools/`: utility helpers for identifiers, render context tracking, and region behavior.
@@ -47,6 +47,12 @@ When copying this file to another PageBuilder ecosystem project, update this sec
 - Target framework: `net10.0`
 - Nullable: enabled
 - XML documentation output: enabled in `Debug`, `Release`, and `NuGet` configurations
+
+## Global web assets
+
+`IWebAssetRegistry` can register application-level assets that every `RawPageController` page imports before rendering.
+Use `RegisterGlobalLinkAsset` for shared `PageLinkDefinition` entries such as manifests, icons, preloads, prefetches, or canonical links.
+Use `RegisterGlobalScriptAsset` and `RegisterGlobalStylesheetAsset` for shared JavaScript and CSS files.
 
 ## Documentation strategy
 
